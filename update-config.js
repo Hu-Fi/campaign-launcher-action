@@ -108,6 +108,25 @@ const run = async () => {
     )}/${key}`;
     const manifestHash = hash;
 
+    const recordingOracle = process.env.RECORDING_ORACLE;
+    const [recordingOracleAddress, recordingOracleFee] =
+      recordingOracle?.split(",") || [];
+
+    if (!recordingOracleAddress || !recordingOracleFee) {
+      throw new Error(
+        "RECORDING_ORACLE_ADDRESS and RECORDING_ORACLE_FEE are required in environment variables."
+      );
+    }
+
+    const reputationOracle = process.env.REPUTATION_ORACLE;
+    const [reputationOracleAddress, reputationOracleFee] =
+      reputationOracle?.split(",") || [];
+    if (!reputationOracleAddress || !reputationOracleFee) {
+      throw new Error(
+        "REPUTATION_ORACLE_ADDRESS and REPUTATION_ORACLE_FEE are required in environment variables."
+      );
+    }
+
     // Build File Content
     const fileContent = `CHAIN_ID=${chainId}
 EXCHANGE_NAME=${process.env.EXCHANGE_NAME}
@@ -116,10 +135,10 @@ REWARD_TOKEN=${process.env.REWARD_TOKEN}
 REWARD_AMOUNT=${process.env.REWARD_AMOUNT}
 START_DATE=${process.env.START_DATE}
 DURATION=${process.env.DURATION}
-RECORDING_ORACLE_ADDRESS=${process.env.RECORDING_ORACLE_ADDRESS}
-RECORDING_ORACLE_FEE=${process.env.RECORDING_ORACLE_FEE}
-REPUTATION_ORACLE_ADDRESS=${process.env.REPUTATION_ORACLE_ADDRESS}
-REPUTATION_ORACLE_FEE=${process.env.REPUTATION_ORACLE_FEE}
+RECORDING_ORACLE_ADDRESS=${recordingOracleAddress}
+RECORDING_ORACLE_FEE=${recordingOracleFee}
+REPUTATION_ORACLE_ADDRESS=${reputationOracleAddress}
+REPUTATION_ORACLE_FEE=${reputationOracleFee}
 MANIFEST_URL=${manifestUrl}
 MANIFEST_HASH=${manifestHash}
 `;
