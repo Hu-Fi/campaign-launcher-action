@@ -1,0 +1,92 @@
+name: Update Campaign Configuration
+
+on:
+  workflow_dispatch:
+    inputs:
+      chain_id:
+        description: "Chain ID"
+        required: true
+        default: 137
+      exchange_name:
+        description: "Exchange Name"
+        required: true
+        default: "mexc"
+      symbol:
+        description: "Trading Pair"
+        required: true
+        default: "XIN/USDT"
+      reward_token:
+        description: "Reward Token"
+        required: true
+        default: "USDT"
+      reward_amount:
+        description: "Reward Amount"
+        required: true
+        default: 100
+      start_date:
+        description: "Start Date"
+        required: true
+        default: "2025-01-01"
+      duration:
+        description: "Duration in Days"
+        required: true
+        default: 30
+      recording_oracle_address:
+        description: "Recording Oracle Address"
+        required: true
+        default: "0xB3800b474dE2Ffe76D2877887167780543F6eC8c"
+      recording_oracle_fee:
+        description: "Recording Oracle Fee"
+        required: true
+        default: 10
+      reputation_oracle_address:
+        description: "Reputation Oracle Address"
+        required: true
+        default: "0x0B4a32Ef8402412D5637617eB5E7Ab2E35e12569"
+      reputation_oracle_fee:
+        description: "Reputation Oracle Fee"
+        required: true
+        default: 10
+jobs:
+  update-campaign:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Update campaign.env
+        run: npm run update-config
+        env:
+          # Input environment variables
+          CHAIN_ID: ${{ github.event.inputs.chain_id }}
+          EXCHANGE_NAME: ${{ github.event.inputs.exchange_name }}
+          SYMBOL: ${{ github.event.inputs.symbol }}
+          REWARD_TOKEN: ${{ github.event.inputs.reward_token }}
+          REWARD_AMOUNT: ${{ github.event.inputs.reward_amount }}
+          START_DATE: ${{ github.event.inputs.start_date }}
+          DURATION: ${{ github.event.inputs.duration }}
+          RECORDING_ORACLE_ADDRESS: ${{ github.event.inputs.recording_oracle_address }}
+          RECORDING_ORACLE_FEE: ${{ github.event.inputs.recording_oracle_fee }}
+          REPUTATION_ORACLE_ADDRESS: ${{ github.event.inputs.reputation_oracle_address }}
+          REPUTATION_ORACLE_FEE: ${{ github.event.inputs.reputation_oracle_fee }}
+          # Secret environment variables
+          WEB3_RPC_URL: ${{ secrets.WEB3_RPC_URL }}
+          WEB3_PRIVATE_KEY: ${{ secrets.WEB3_PRIVATE_KEY }}
+          S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
+          S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.name "github-actions"
+          git config --local user.email "github-actions@github.com"
+          git add campaign.env
+          git commit -m "Update campaign configuration"
+          git push
