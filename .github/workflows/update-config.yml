@@ -50,6 +50,8 @@ on:
 jobs:
   update-campaign:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Allow the action to push changes to the repository
     steps:
       - uses: actions/checkout@v3
         with:
