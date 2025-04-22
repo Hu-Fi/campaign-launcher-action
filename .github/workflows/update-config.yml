@@ -87,8 +87,6 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add campaign.env
           git commit -m "Update campaign configuration"
-          git push
+          git push origin HEAD
