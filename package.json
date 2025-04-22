@@ -5,6 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "create-escrow": "node create-escrow.js",
+    "cancel-escrow": "node cancel-escrow.js",
     "update-config": "node update-config.js"
   },
   "author": "Human Protocol",
