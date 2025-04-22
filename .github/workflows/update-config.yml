@@ -5,10 +5,14 @@ on:
     inputs:
       chain_id:
         description: "Chain ID"
+        type: choice
+        options: ["137", "80002", "1", "11155111"]
         required: true
-        default: 137
+        default: "137"
       exchange_name:
         description: "Exchange Name"
+        type: choice
+        options: ["mexc", "binance", "gate"]
         required: true
         default: "mexc"
       symbol:
@@ -17,10 +21,13 @@ on:
         default: "XIN/USDT"
       reward_token:
         description: "Reward Token"
+        type: choice
+        options: ["HMT", "USDT"]
         required: true
         default: "USDT"
       reward_amount:
         description: "Reward Amount"
+        type: number
         required: true
         default: 100
       start_date:
@@ -29,6 +36,7 @@ on:
         default: "2025-01-01"
       duration:
         description: "Duration in Days"
+        type: number
         required: true
         default: 30
       recording_oracle:

@@ -8,7 +8,9 @@ on:
 jobs:
   create-escrow:
     runs-on: ubuntu-latest
-    if: ${{ secrets.ENABLE_CRON == 'true' }}
+    env:
+      ENABLE_CRON: ${{ secrets.ENABLE_CRON }}
+    if: ${{ env.ENABLE_CRON == 'true' }}
     steps:
       - uses: actions/checkout@v3
 
