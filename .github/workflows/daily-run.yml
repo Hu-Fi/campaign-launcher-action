@@ -14,7 +14,7 @@ jobs:
         run: |
           if [ "${{ secrets.ENABLE_CRON }}" != "true" ]; then
             echo "ENABLE_CRON is not true. Exiting."
-            exit 1
+            exit 0
           fi
       - uses: actions/checkout@v3
       - name: Set up Node.js
