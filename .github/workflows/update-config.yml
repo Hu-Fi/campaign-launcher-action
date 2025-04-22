@@ -47,15 +47,22 @@ on:
         description: "Reputation Oracle Address & Fee (Separated by comma)"
         required: true
         default: "0x0B4a32Ef8402412D5637617eB5E7Ab2E35e12569,10"
+
+permissions:
+  contents: write # Allow the action to push changes to the repository
+
 jobs:
   update-campaign:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write # Allow the action to push changes to the repository
     steps:
       - uses: actions/checkout@v3
         with:
           persist-credentials: false
+
+      - name: Set up Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -87,8 +94,6 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add campaign.env
           git commit -m "Update campaign configuration"
           git push origin HEAD
