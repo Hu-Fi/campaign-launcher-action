@@ -8,12 +8,15 @@ on:
 jobs:
   create-escrow:
     runs-on: ubuntu-latest
-    env:
-      ENABLE_CRON: ${{ secrets.ENABLE_CRON }}
-    if: ${{ env.ENABLE_CRON == 'true' }}
     steps:
+      - name: Check if ENABLE_CRON is true
+        id: check_enable_cron
+        run: |
+          if [ "${{ secrets.ENABLE_CRON }}" != "true" ]; then
+            echo "ENABLE_CRON is not true. Exiting."
+            exit 1
+          fi
       - uses: actions/checkout@v3
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
