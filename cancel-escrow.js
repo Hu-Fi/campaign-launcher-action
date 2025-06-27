@@ -1,15 +1,14 @@
 const ethers = require("ethers");
 const { EscrowClient } = require("@human-protocol/sdk");
 
-const run = async () => {
+async function cancelEscrow(escrowAddress, env = process.env) {
   try {
-    const escrowAddress = process.env.ESCROW_ADDRESS;
     if (!escrowAddress) {
       throw new Error("Escrow address is required.");
     }
 
-    const privateKey = process.env.WEB3_PRIVATE_KEY;
-    const rpcUrl = process.env.WEB3_RPC_URL;
+    const privateKey = env.WEB3_PRIVATE_KEY;
+    const rpcUrl = env.WEB3_RPC_URL;
     if (!privateKey || !rpcUrl) {
       throw new Error(
         "Missing WEB3_PRIVATE_KEY or WEB3_RPC_URL in environment variables."
@@ -22,10 +21,15 @@ const run = async () => {
     const escrowClient = await EscrowClient.build(signer);
 
     await escrowClient.cancel(escrowAddress);
+    console.log(`Escrow ${escrowAddress} cancelled.`);
   } catch (e) {
     console.error(e);
     process.exit(1);
   }
-};
+}
 
-run();
+if (require.main === module) {
+  cancelEscrow(process.env.ESCROW_ADDRESS);
+}
+
+module.exports = { cancelEscrow };
