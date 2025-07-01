@@ -24,9 +24,9 @@ A GitHub Action to create and manage escrows for market making campaigns using t
    - `START_DELAY` (in seconds; period to add to current time for campaign start)
    - `DURATION` (in days)
    - `DAILY_VOLUME_TARGET`
-   - `RECORDING_ORACLE`
+   - `RECORDING_ORACLE_ADDRESS`
    - `RECORDING_ORACLE_FEE`
-   - `REPUTATION_ORACLE`
+   - `REPUTATION_ORACLE_ADDRESS`
    - `REPUTATION_ORACLE_FEE`
 
 2. **Launch a campaign (create manifest and escrow)**
@@ -79,9 +79,9 @@ REWARD_AMOUNT=100
 START_DELAY=3600
 DURATION=60
 DAILY_VOLUME_TARGET=1000
-RECORDING_ORACLE=0x...
+RECORDING_ORACLE_ADDRESS=0x...
 RECORDING_ORACLE_FEE=1
-REPUTATION_ORACLE=0x...
+REPUTATION_ORACLE_ADDRESS=0x...
 REPUTATION_ORACLE_FEE=1
 ```
 
