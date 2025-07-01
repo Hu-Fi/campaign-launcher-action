@@ -12,8 +12,10 @@ A GitHub Action to create and manage escrows for market making campaigns using t
    - `WEB3_RPC_URL`
    - `S3_ACCESS_KEY`
    - `S3_SECRET_KEY`
+   - `S3_BUCKET_NAME`
 
    **Public or non-sensitive (can be set as GitHub environment variables):**
+   - `CAMPAIGN_LAUNCH_ENABLED`
    - `CHAIN_ID`
    - `EXCHANGE_NAME`
    - `SYMBOL`
@@ -22,8 +24,10 @@ A GitHub Action to create and manage escrows for market making campaigns using t
    - `START_DELAY` (in seconds; period to add to current time for campaign start)
    - `DURATION` (in days)
    - `DAILY_VOLUME_TARGET`
-   - `RECORDING_ORACLE` (format: `address,fee`)
-   - `REPUTATION_ORACLE` (format: `address,fee`)
+   - `RECORDING_ORACLE`
+   - `RECORDING_ORACLE_FEE`
+   - `REPUTATION_ORACLE`
+   - `REPUTATION_ORACLE_FEE`
 
 2. **Launch a campaign (create manifest and escrow)**
    ```
@@ -43,7 +47,6 @@ A GitHub Action to create and manage escrows for market making campaigns using t
 - `create-escrow.js`: Script to create and fund an escrow using a manifest.
 - `cancel-escrow.js`: Script to cancel an escrow.
 - `launch-campaign.js`: Script to create a manifest and immediately launch an escrow.
-- `update-config.js`: (Legacy) Script to upload manifest to S3 and print campaign details.
 
 ## Example GitHub Actions Workflows
 
@@ -64,8 +67,10 @@ WEB3_PRIVATE_KEY=your_private_key_here
 WEB3_RPC_URL=https://your_rpc_url
 S3_ACCESS_KEY=your_s3_access_key
 S3_SECRET_KEY=your_s3_secret_key
+S3_BUCKET_NAME=you_s3_bucket_name
 
 # Public or non-sensitive
+CAMPAIGN_LAUNCH_ENABLED=true
 CHAIN_ID=11155111
 EXCHANGE_NAME=mexc
 SYMBOL=XIN/USDT
@@ -73,10 +78,11 @@ REWARD_TOKEN=USDT
 REWARD_AMOUNT=100
 START_DELAY=3600
 DURATION=60
-DAILY_VOLUME_TARGET=1.01
-RECORDING_ORACLE=0x...,10
-REPUTATION_ORACLE=0x...,10
-ADDITIONAL_DATA=optional
+DAILY_VOLUME_TARGET=1000
+RECORDING_ORACLE=0x...
+RECORDING_ORACLE_FEE=1
+REPUTATION_ORACLE=0x...
+REPUTATION_ORACLE_FEE=1
 ```
 
 ## Manifest Example
@@ -89,8 +95,7 @@ ADDITIONAL_DATA=optional
   "start_date": "2025-05-27T12:00:00.000Z",
   "end_date": "2025-05-28T12:00:00.000Z",
   "type": "MARKET_MAKING",
-  "daily_volume_target": 1.01,
-  "additional_data": "optional"
+  "daily_volume_target": 1.01
 }
 ```
 

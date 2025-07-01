@@ -138,14 +138,14 @@
   integrity sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ==
 
 "@human-protocol/core@x":
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/@human-protocol/core/-/core-4.1.2.tgz#635f0de0845f55a19d8dcc154841bd9d62519f2c"
-  integrity sha512-GODW7HjMgrv405uO9wJALZli3s3KBThzgIDzIWnYoq16Elwd4xQ7Ev8IgdKoR2dwZNVH6DbRBkl+GwiBP2KbHw==
+  version "4.1.3"
+  resolved "https://registry.yarnpkg.com/@human-protocol/core/-/core-4.1.3.tgz#c6faf2d23d9b74aaeecbcc26be2fc43ef232aa7e"
+  integrity sha512-R5A/IBFMGOSusBrhQq5dq3/eshTkSNoi1v33seVTU3rhPBxrK0BOUW6jO/lNNGxes6o8zkrNN3dvuOwQ8B7xrA==
 
-"@human-protocol/sdk@^4.1.2":
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/@human-protocol/sdk/-/sdk-4.1.2.tgz#9618b8b06f324951a86285e572d448cfed58066a"
-  integrity sha512-KrmbsBuGCMHzzTYPQeQ+v6GNrGArkkt08CH6BsBEn9RcaEIW2TTEAbIPv1B88aamw5SkNltzR63KoozY/aoPfw==
+"@human-protocol/sdk@^4.1.3":
+  version "4.1.3"
+  resolved "https://registry.yarnpkg.com/@human-protocol/sdk/-/sdk-4.1.3.tgz#455fa024fbbd577f10d54e5183fc3c550d3ed2b4"
+  integrity sha512-HU/BKlgDJWzeox6XN4aBxWlMB2psSu60k+tAiQYDnbcRoV9dZkLHSzwh6W5WjmvMgH7aRNhWvQQMBmJiD/VWDA==
   dependencies:
     "@human-protocol/core" x
     axios "^1.4.0"
@@ -159,9 +159,9 @@
     vitest "^3.0.9"
 
 "@jridgewell/sourcemap-codec@^1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.5.0.tgz#3188bcb273a414b0d215fd22a58540b989b9409a"
-  integrity sha512-gv3ZRaISU3fjPAgNsriBRqGWQL6quFx04YMPW/zD8XMLsU32mhCCbfbO6KZFLjvYpCZ8zyDEgqsgf+PwPaM7GQ==
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.5.2.tgz#4f25c8f17f28ccf70ed16e03f8fbf6d3998cb8fd"
+  integrity sha512-gKYheCylLIedI+CSZoDtGkFV9YEBxRRVcfCH7OfAqh4TyUyRjEE6WVE/aXDXX0p8BIe/QgLcaAoI0220KRRFgg==
 
 "@noble/curves@1.2.0":
   version "1.2.0"

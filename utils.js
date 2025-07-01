@@ -15,16 +15,6 @@ const getTokenAddress = (chainId, name) => {
   }
 };
 
-const getS3BucketName = (chainId) => {
-  switch (chainId) {
-    case ChainId.POLYGON:
-      return "hufi-campaign-manifests-mainnet";
-    default:
-      return "hufi-campaign-manifests-testnet";
-  }
-};
-
 module.exports = {
   getTokenAddress,
-  getS3BucketName,
 };

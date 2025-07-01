@@ -1,6 +1,6 @@
 const crypto = require("crypto");
 const Minio = require("minio");
-const { getTokenAddress, getS3BucketName } = require("./utils");
+const { getTokenAddress } = require("./utils");
 
 async function createManifest(env) {
   const chainId = parseInt(env.CHAIN_ID);
@@ -36,7 +36,9 @@ async function createManifest(env) {
 
   const s3AccessKey = env.S3_ACCESS_KEY;
   const s3SecretKey = env.S3_SECRET_KEY;
+  const s3BucketName = env.S3_BUCKET_NAME;
   if (!s3AccessKey || !s3SecretKey) throw new Error("Missing S3_ACCESS_KEY or S3_SECRET_KEY.");
+  if (!s3BucketName) throw new Error("Missing S3_BUCKET_NAME.");
 
   const minioClient = new Minio.Client({
     endPoint: "storage.googleapis.com",
@@ -50,12 +52,12 @@ async function createManifest(env) {
   const hash = crypto.createHash("sha1").update(content).digest("hex");
   const key = `s3${hash}.json`;
 
-  await minioClient.putObject(getS3BucketName(chainId), key, content, {
+  await minioClient.putObject(s3BucketName, key, content, {
     "Content-Type": "application/json",
     "Cache-Control": "no-store",
   });
 
-  const manifestUrl = `https://storage.googleapis.com/${getS3BucketName(chainId)}/${key}`;
+  const manifestUrl = `https://storage.googleapis.com/${s3BucketName}/${key}`;
   const manifestHash = hash;
 
   console.log(`Manifest created: ${manifest}`);
