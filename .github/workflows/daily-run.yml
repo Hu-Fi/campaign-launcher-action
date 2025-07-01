@@ -2,12 +2,25 @@ name: Create Escrow
 
 on:
   schedule:
-    - cron: "0 0 * * *" # Every day at midnight UTC
-  workflow_dispatch: # Allow manual run
+    - cron: "0 0 * * *"
+  workflow_dispatch:
 
 jobs:
   create-escrow:
     runs-on: ubuntu-latest
+    env:
+      CAMPAIGN_LAUNCH_ENABLED: ${{ vars.CAMPAIGN_LAUNCH_ENABLED }}
+      CHAIN_ID: ${{ vars.CHAIN_ID }}
+      EXCHANGE_NAME: ${{ vars.EXCHANGE_NAME }}
+      SYMBOL: ${{ vars.SYMBOL }}
+      REWARD_TOKEN: ${{ vars.REWARD_TOKEN }}
+      REWARD_AMOUNT: ${{ vars.REWARD_AMOUNT }}
+      START_DELAY: ${{ vars.START_DELAY }}
+      DURATION: ${{ vars.DURATION }}
+      DAILY_VOLUME_TARGET: ${{ vars.DAILY_VOLUME_TARGET }}
+      RECORDING_ORACLE: ${{ vars.RECORDING_ORACLE }}
+      REPUTATION_ORACLE: ${{ vars.REPUTATION_ORACLE }}
+      ADDITIONAL_DATA: ${{ vars.ADDITIONAL_DATA }}
     steps:
       - name: Check if CAMPAIGN_LAUNCH_ENABLED is true
         id: check_enable_cron
@@ -28,21 +41,8 @@ jobs:
       - name: Run launch-campaign script
         run: node launch-campaign.js
         env:
-          # Secret environment variables
           WEB3_RPC_URL: ${{ secrets.WEB3_RPC_URL }}
           WEB3_PRIVATE_KEY: ${{ secrets.WEB3_PRIVATE_KEY }}
           S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
           S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
           S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
-          # Public or non-sensitive variables from GitHub environment variables
-          CHAIN_ID: ${{ env.CHAIN_ID }}
-          EXCHANGE_NAME: ${{ env.EXCHANGE_NAME }}
-          SYMBOL: ${{ env.SYMBOL }}
-          REWARD_TOKEN: ${{ env.REWARD_TOKEN }}
-          REWARD_AMOUNT: ${{ env.REWARD_AMOUNT }}
-          START_DELAY: ${{ env.START_DELAY }}
-          DURATION: ${{ env.DURATION }}
-          DAILY_VOLUME_TARGET: ${{ env.DAILY_VOLUME_TARGET }}
-          RECORDING_ORACLE: ${{ env.RECORDING_ORACLE }}
-          REPUTATION_ORACLE: ${{ env.REPUTATION_ORACLE }}
-          ADDITIONAL_DATA: ${{ env.ADDITIONAL_DATA }}
