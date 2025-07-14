@@ -11,7 +11,7 @@ async function createManifest(env) {
   if (isNaN(startDelay)) throw new Error("START_DELAY must be a number (seconds).");
   const now = Date.now();
   const startDate = new Date(now + startDelay * 1000);
-  const duration = parseInt(env.DURATION) * 24 * 60 * 60;
+  const duration = parseInt(env.DURATION) * 60 * 60;
   const startDateISO = startDate.toISOString();
   const endDateISO = new Date(startDate.getTime() + duration * 1000).toISOString();
 

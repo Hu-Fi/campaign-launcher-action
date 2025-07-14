@@ -22,7 +22,7 @@ A GitHub Action to create and manage escrows for market making campaigns using t
    - `REWARD_TOKEN`
    - `REWARD_AMOUNT`
    - `START_DELAY` (in seconds; period to add to current time for campaign start)
-   - `DURATION` (in days)
+   - `DURATION` (in hours)
    - `DAILY_VOLUME_TARGET`
    - `RECORDING_ORACLE_ADDRESS`
    - `RECORDING_ORACLE_FEE`
@@ -77,7 +77,7 @@ SYMBOL=XIN/USDT
 REWARD_TOKEN=USDT
 REWARD_AMOUNT=100
 START_DELAY=3600
-DURATION=60
+DURATION=24
 DAILY_VOLUME_TARGET=1000
 RECORDING_ORACLE_ADDRESS=0x...
 RECORDING_ORACLE_FEE=1
