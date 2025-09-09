@@ -25,11 +25,8 @@ async function createManifest(env) {
     daily_volume_target: parseFloat(env.DAILY_VOLUME_TARGET),
   };
 
-  const content = JSON.stringify(manifest);
-  const hash = crypto.createHash("sha1").update(content).digest("hex");
-
-  const manifestString = content;
-  const manifestHash = hash;
+  const manifestString = JSON.stringify(manifest);
+  const manifestHash = crypto.createHash("sha1").update(content).digest("hex");
 
   console.log(`Manifest created: ${manifest}`);
   return { manifestString, manifestHash, manifest };
