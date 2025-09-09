@@ -1,5 +1,4 @@
 const crypto = require("crypto");
-require('dotenv').config();
 
 async function createManifest(env) {
   const chainId = parseInt(env.CHAIN_ID);

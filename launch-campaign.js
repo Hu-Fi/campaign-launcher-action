@@ -1,6 +1,5 @@
 const { createManifest } = require("./create-manifest");
 const { createEscrow } = require("./create-escrow");
-require('dotenv').config();
 
 (async () => {
   try {

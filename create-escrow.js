@@ -4,8 +4,6 @@ const { EscrowClient, StakingClient } = require("@human-protocol/sdk");
 const { getTokenAddress } = require("./utils");
 const { v4: uuidV4 } = require("uuid");
 const ERC20ABI = require("./abi/ERC20.json");
-require('dotenv').config();
-
 
 async function createEscrow(env, manifest, manifestHash) {
   const chainId = parseInt(env.CHAIN_ID);
