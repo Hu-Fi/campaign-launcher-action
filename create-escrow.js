@@ -4,27 +4,10 @@ const { EscrowClient, StakingClient } = require("@human-protocol/sdk");
 const { getTokenAddress } = require("./utils");
 const { v4: uuidV4 } = require("uuid");
 const ERC20ABI = require("./abi/ERC20.json");
-const https = require("https");
+require('dotenv').config();
 
-function fetchManifest(url) {
-  return new Promise((resolve, reject) => {
-    https
-      .get(url, (res) => {
-        let data = "";
-        res.on("data", (chunk) => (data += chunk));
-        res.on("end", () => {
-          try {
-            resolve(JSON.parse(data));
-          } catch (e) {
-            reject(e);
-          }
-        });
-      })
-      .on("error", reject);
-  });
-}
 
-async function createEscrow(env, manifestUrl, manifestHash) {
+async function createEscrow(env, manifest, manifestHash) {
   const chainId = parseInt(env.CHAIN_ID);
   const privateKey = env.WEB3_PRIVATE_KEY;
   const rpcUrl = env.WEB3_RPC_URL;
@@ -35,17 +18,22 @@ async function createEscrow(env, manifestUrl, manifestHash) {
   const signer = new ethers.Wallet(privateKey, provider);
 
   const escrowClient = await EscrowClient.build(signer);
+  
   const stakingClient = await StakingClient.build(signer);
 
-  const manifest = await fetchManifest(manifestUrl);
-
-  const tokenAddress = getTokenAddress(chainId, manifest.fund_token);
-  const tokenContract = new ethers.Contract(tokenAddress, ERC20ABI, signer);
+  const tokenAddress = getTokenAddress(chainId, env.REWARD_TOKEN);
+  const tokenContract = new ethers.Contract(
+          tokenAddress,
+          ERC20ABI,
+          signer
+        );
+  const tokenDecimals = await tokenContract.decimals();
+  const _tokenDecimals = Number(tokenDecimals) || 18;
 
   const fundAmount = ethers.parseUnits(
-    env.REWARD_AMOUNT,
-    await tokenContract.decimals()
-  );
+          env.REWARD_AMOUNT.toString(),
+          _tokenDecimals
+        );
 
   // Check if staked
   const { stakedAmount } = await stakingClient.getStakerInfo(signer.address);
@@ -57,11 +45,8 @@ async function createEscrow(env, manifestUrl, manifestHash) {
   }
 
   console.log("Creating escrow...");
-  const escrowAddress = await escrowClient.createEscrow(
-    tokenAddress,
-    [signer.address],
-    uuidV4()
-  );
+  
+  const escrowAddress = await escrowClient.createEscrow(tokenAddress, uuidV4());
   console.log(`Escrow created at ${escrowAddress}`);
 
   console.log("Funding escrow...");
@@ -69,25 +54,28 @@ async function createEscrow(env, manifestUrl, manifestHash) {
   await escrowClient.fund(escrowAddress, fundAmount);
 
   console.log("Setting up escrow...");
+  const manifestString = JSON.stringify(manifest)
+  
   const escrowConfig = {
     exchangeOracle: signer.address,
-    exchangeOracleFee: 10,
+    exchangeOracleFee: 1,
     recordingOracle: env.RECORDING_ORACLE_ADDRESS,
     recordingOracleFee: parseInt(env.RECORDING_ORACLE_FEE),
     reputationOracle: env.REPUTATION_ORACLE_ADDRESS,
     reputationOracleFee: parseInt(env.REPUTATION_ORACLE_FEE),
-    manifestUrl,
-    manifestHash,
+    manifest:manifestString,
+    manifestHash:manifestHash,
   };
-  await escrowClient.setup(escrowAddress, escrowConfig);
+
+   await escrowClient.setup(escrowAddress, escrowConfig);
 
   return escrowAddress;
 }
 
 if (require.main === module) {
-  const manifestUrl = process.env.MANIFEST_URL;
+  const manifest = process.env.MANIFEST_STRING;
   const manifestHash = process.env.MANIFEST_HASH;
-  createEscrow(process.env, manifestUrl, manifestHash)
+  createEscrow(process.env, manifest, manifestHash)
     .then((escrowAddress) => {
       console.log(`Escrow created at ${escrowAddress}`);
     })
