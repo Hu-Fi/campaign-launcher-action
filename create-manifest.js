@@ -26,7 +26,9 @@ async function createManifest(env) {
   };
 
   const manifestString = JSON.stringify(manifest);
-  const manifestHash = crypto.createHash("sha1").update(content).digest("hex");
+  const manifestHash = crypto.createHash("sha1").update(manifestString).digest("hex");
+
+
 
   console.log(`Manifest created: ${manifest}`);
   return { manifestString, manifestHash, manifest };
