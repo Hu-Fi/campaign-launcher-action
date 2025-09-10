@@ -3,7 +3,7 @@ const { createEscrow } = require("./create-escrow");
 
 (async () => {
   try {
-    // Step 1: Create manifest and get Manifest/hash
+    // Step 1: Create manifest and get hash
     const { manifest, manifestHash } = await createManifest(process.env);
 
     // Step 2: Create escrow using manifest info

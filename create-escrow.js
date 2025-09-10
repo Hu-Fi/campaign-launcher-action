@@ -25,12 +25,11 @@ async function createEscrow(env, manifest, manifestHash) {
           ERC20ABI,
           signer
         );
-  const tokenDecimals = await tokenContract.decimals();
-  const _tokenDecimals = Number(tokenDecimals) || 18;
+  const tokenDecimals = Number(await tokenContract.decimals()) || 18;
 
   const fundAmount = ethers.parseUnits(
           env.REWARD_AMOUNT.toString(),
-          _tokenDecimals
+          tokenDecimals
         );
 
   // Check if staked
@@ -61,8 +60,8 @@ async function createEscrow(env, manifest, manifestHash) {
     recordingOracleFee: parseInt(env.RECORDING_ORACLE_FEE),
     reputationOracle: env.REPUTATION_ORACLE_ADDRESS,
     reputationOracleFee: parseInt(env.REPUTATION_ORACLE_FEE),
-    manifest:manifestString,
-    manifestHash:manifestHash,
+    manifest: manifestString,
+    manifestHash: manifestHash,
   };
 
    await escrowClient.setup(escrowAddress, escrowConfig);
