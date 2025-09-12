@@ -203,20 +203,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@human-protocol/core@npm:^5.0.0-beta.0":
-  version: 5.0.0-beta.0
-  resolution: "@human-protocol/core@npm:5.0.0-beta.0"
+"@human-protocol/core@npm:^4.2.1":
+  version: 4.2.1
+  resolution: "@human-protocol/core@npm:4.2.1"
   peerDependencies:
     ethers: ~6.15.0
-  checksum: 10c0/277222570a565a589715284587cb0766a419f88f92844b95681544eaeb3053708fccd321c9ead34d39ef4a57d398c6e8c8fb8eaee9937c7443abf0524768061e
+  checksum: 10c0/f2e3f97040063a7b1264c35d969f8b241f919fcd012c05d9c687c9d7b407b9250c0cfc63cd1a0e7ccdd993e40a8633832ae5389b8e2128e4deec3ddb749367fc
   languageName: node
   linkType: hard
 
-"@human-protocol/sdk@npm:5.0.0-beta.0":
-  version: 5.0.0-beta.0
-  resolution: "@human-protocol/sdk@npm:5.0.0-beta.0"
+"@human-protocol/sdk@npm:^4.3.0":
+  version: 4.3.0
+  resolution: "@human-protocol/sdk@npm:4.3.0"
   dependencies:
-    "@human-protocol/core": "npm:x"
+    "@human-protocol/core": "npm:4.2.1"
     axios: "npm:^1.4.0"
     ethers: "npm:~6.15.0"
     graphql: "npm:^16.8.1"
@@ -226,7 +226,7 @@ __metadata:
     openpgp: "npm:^5.11.2"
     secp256k1: "npm:^5.0.1"
     vitest: "npm:^3.0.9"
-  checksum: 10c0/c8312000a7b918e74242c3ccf0fd6fdbc4ae5f129d8060dcfb499227cc13cd28933279a023ee65336916eddc7a25c096ada1e45b0606e488428ddc31b5d21e0c
+  checksum: 10c0/9591d4ea2bdc88f6a1567c7a731cd8b34821f296facd44a42cda45e5df40eaa99c2a5143d6407398f556530b6ea098d9f98beb82b7ea438dfe696434fefef08a
   languageName: node
   linkType: hard
 
@@ -801,7 +801,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "campaign-launcher-action@workspace:."
   dependencies:
-    "@human-protocol/sdk": "npm:5.0.0-beta.0"
+    "@human-protocol/sdk": "npm:^4.3.0"
     dotenv: "npm:^16.5.0"
     ethers: "npm:^6.15.0"
     minio: "npm:^8.0.5"
@@ -2445,17 +2445,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:2.7.0":
+"tslib@npm:2.7.0, tslib@npm:^2.1.0":
   version: 2.7.0
   resolution: "tslib@npm:2.7.0"
   checksum: 10c0/469e1d5bf1af585742128827000711efa61010b699cb040ab1800bcd3ccdd37f63ec30642c9e07c4439c1db6e46345582614275daca3e0f4abae29b0083f04a6
-  languageName: node
-  linkType: hard
-
-"tslib@npm:^2.1.0":
-  version: 2.8.1
-  resolution: "tslib@npm:2.8.1"
-  checksum: 10c0/9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62
   languageName: node
   linkType: hard
 

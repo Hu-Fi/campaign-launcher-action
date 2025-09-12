@@ -43,7 +43,7 @@ async function createEscrow(env, manifest, manifestHash) {
 
   console.log("Creating escrow...");
   
-  const escrowAddress = await escrowClient.createEscrow(tokenAddress, uuidV4());
+  const escrowAddress = await escrowClient.createEscrow(tokenAddress, [], uuidV4());
   console.log(`Escrow created at ${escrowAddress}`);
 
   console.log("Funding escrow...");

@@ -11,17 +11,15 @@ jobs:
   cancel-escrow:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-
+      - uses: actions/checkout@v4
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: "22"
-          cache: "yarn"
-
+          node-version-file: .nvmrc
+      - name: Install Corepack
+        run: npm install -g corepack
       - name: Install dependencies
-        run: yarn install
-
+        run: yarn install --immutable
       - name: Cancel Escrow
         run: node cancel-escrow.js
         env:
