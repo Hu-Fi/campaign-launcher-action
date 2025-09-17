@@ -1,4 +1,3 @@
-const fs = require("fs");
 const ethers = require("ethers");
 const { EscrowClient, StakingClient } = require("@human-protocol/sdk");
 const { getTokenAddress } = require("./utils");
@@ -47,15 +46,14 @@ async function createEscrow(env, manifest, manifestHash) {
   console.log(`Escrow created at ${escrowAddress}`);
 
   console.log("Funding escrow...");
-  await (await tokenContract.approve(escrowAddress, fundAmount)).wait();
   await escrowClient.fund(escrowAddress, fundAmount);
 
   console.log("Setting up escrow...");
   const manifestString = JSON.stringify(manifest)
   
   const escrowConfig = {
-    exchangeOracle: signer.address,
-    exchangeOracleFee: 1,
+    exchangeOracle: env.EXCHANGE_ORACLE_ADDRESS,
+    exchangeOracleFee: parseInt(env.EXCHANGE_ORACLE_FEE),
     recordingOracle: env.RECORDING_ORACLE_ADDRESS,
     recordingOracleFee: parseInt(env.RECORDING_ORACLE_FEE),
     reputationOracle: env.REPUTATION_ORACLE_ADDRESS,

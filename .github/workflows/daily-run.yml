@@ -7,29 +7,27 @@ on:
 
 jobs:
   create-escrow:
+    if: ${{ vars.CAMPAIGN_LAUNCH_ENABLED == 'true' }}
     runs-on: ubuntu-latest
+    concurrency:
+      group: create-escrow
+      cancel-in-progress: false
     env:
-      CAMPAIGN_LAUNCH_ENABLED: ${{ vars.CAMPAIGN_LAUNCH_ENABLED }}
       CHAIN_ID: ${{ vars.CHAIN_ID }}
-      EXCHANGE_NAME: ${{ vars.EXCHANGE_NAME }}
-      SYMBOL: ${{ vars.SYMBOL }}
-      REWARD_TOKEN: ${{ vars.REWARD_TOKEN }}
-      REWARD_AMOUNT: ${{ vars.REWARD_AMOUNT }}
-      START_DELAY: ${{ vars.START_DELAY }}
-      DURATION: ${{ vars.DURATION }}
       DAILY_VOLUME_TARGET: ${{ vars.DAILY_VOLUME_TARGET }}
+      DURATION: ${{ vars.DURATION }}
+      EXCHANGE_NAME: ${{ vars.EXCHANGE_NAME }}
+      EXCHANGE_ORACLE_ADDRESS: ${{ vars.EXCHANGE_ORACLE_ADDRESS }}
+      EXCHANGE_ORACLE_FEE: ${{ vars.EXCHANGE_ORACLE_FEE }}
       RECORDING_ORACLE_ADDRESS: ${{ vars.RECORDING_ORACLE_ADDRESS }}
       RECORDING_ORACLE_FEE: ${{ vars.RECORDING_ORACLE_FEE }}
       REPUTATION_ORACLE_ADDRESS: ${{ vars.REPUTATION_ORACLE_ADDRESS }}
       REPUTATION_ORACLE_FEE: ${{ vars.REPUTATION_ORACLE_FEE }}
+      REWARD_AMOUNT: ${{ vars.REWARD_AMOUNT }}
+      REWARD_TOKEN: ${{ vars.REWARD_TOKEN }}
+      START_DELAY: ${{ vars.START_DELAY }}
+      SYMBOL: ${{ vars.SYMBOL }}
     steps:
-      - name: Check if CAMPAIGN_LAUNCH_ENABLED is true
-        id: check_enable_cron
-        run: |
-          if [ "${{ env.CAMPAIGN_LAUNCH_ENABLED }}" != "true" ]; then
-            echo "CAMPAIGN_LAUNCH_ENABLED is not true. Exiting."
-            exit 0
-          fi
       - uses: actions/checkout@v4
       - name: Set up Node.js
         uses: actions/setup-node@v4
