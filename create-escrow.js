@@ -54,8 +54,8 @@ async function createEscrow(env, manifest, manifestHash) {
   const manifestString = JSON.stringify(manifest)
   
   const escrowConfig = {
-    exchangeOracle: signer.address,
-    exchangeOracleFee: 1,
+    exchangeOracle: env.EXCHANGE_ORACLE_ADDRESS,
+    exchangeOracleFee: parseInt(env.EXCHANGE_ORACLE_FEE),
     recordingOracle: env.RECORDING_ORACLE_ADDRESS,
     recordingOracleFee: parseInt(env.RECORDING_ORACLE_FEE),
     reputationOracle: env.REPUTATION_ORACLE_ADDRESS,

@@ -11,17 +11,19 @@ jobs:
     env:
       CAMPAIGN_LAUNCH_ENABLED: ${{ vars.CAMPAIGN_LAUNCH_ENABLED }}
       CHAIN_ID: ${{ vars.CHAIN_ID }}
-      EXCHANGE_NAME: ${{ vars.EXCHANGE_NAME }}
-      SYMBOL: ${{ vars.SYMBOL }}
-      REWARD_TOKEN: ${{ vars.REWARD_TOKEN }}
-      REWARD_AMOUNT: ${{ vars.REWARD_AMOUNT }}
-      START_DELAY: ${{ vars.START_DELAY }}
-      DURATION: ${{ vars.DURATION }}
       DAILY_VOLUME_TARGET: ${{ vars.DAILY_VOLUME_TARGET }}
+      DURATION: ${{ vars.DURATION }}
+      EXCHANGE_NAME: ${{ vars.EXCHANGE_NAME }}
+      EXCHANGE_ORACLE_ADDRESS: ${{ vars.EXCHANGE_ORACLE_ADDRESS }}
+      EXCHANGE_ORACLE_FEE: ${{ vars.EXCHANGE_ORACLE_FEE }}
       RECORDING_ORACLE_ADDRESS: ${{ vars.RECORDING_ORACLE_ADDRESS }}
       RECORDING_ORACLE_FEE: ${{ vars.RECORDING_ORACLE_FEE }}
       REPUTATION_ORACLE_ADDRESS: ${{ vars.REPUTATION_ORACLE_ADDRESS }}
       REPUTATION_ORACLE_FEE: ${{ vars.REPUTATION_ORACLE_FEE }}
+      REWARD_AMOUNT: ${{ vars.REWARD_AMOUNT }}
+      REWARD_TOKEN: ${{ vars.REWARD_TOKEN }}
+      START_DELAY: ${{ vars.START_DELAY }}
+      SYMBOL: ${{ vars.SYMBOL }}
     steps:
       - name: Check if CAMPAIGN_LAUNCH_ENABLED is true
         id: check_enable_cron
