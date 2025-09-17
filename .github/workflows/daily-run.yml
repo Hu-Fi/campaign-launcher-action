@@ -28,10 +28,12 @@ jobs:
       - name: Check if CAMPAIGN_LAUNCH_ENABLED is true
         id: check_enable_cron
         run: |
-          if [ "${{ env.CAMPAIGN_LAUNCH_ENABLED }}" != "true" ]; then
+          if [ "${CAMPAIGN_LAUNCH_ENABLED}" != "true" ]; then
             echo "CAMPAIGN_LAUNCH_ENABLED is not true. Exiting."
             exit 0
           fi
+        env:
+          CAMPAIGN_LAUNCH_ENABLED: ${{ env.CAMPAIGN_LAUNCH_ENABLED }}
       - uses: actions/checkout@v4
       - name: Set up Node.js
         uses: actions/setup-node@v4
