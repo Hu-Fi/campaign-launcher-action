@@ -10,9 +10,7 @@ A GitHub Action to create and manage escrows for market making campaigns using t
    **Secrets (keep these private):**
    - `WEB3_PRIVATE_KEY`
    - `WEB3_RPC_URL`
-   - `S3_ACCESS_KEY`
-   - `S3_SECRET_KEY`
-   - `S3_BUCKET_NAME`
+   - `SLACK_WEBHOOK_URL` (optional; used to warn if balance is insufficient to fund the next scheduled escrow and/or native gas is low)
 
    **Public or non-sensitive (can be set as GitHub environment variables):**
    - `CAMPAIGN_LAUNCH_ENABLED`
@@ -30,6 +28,7 @@ A GitHub Action to create and manage escrows for market making campaigns using t
    - `RECORDING_ORACLE_FEE`
    - `REPUTATION_ORACLE_ADDRESS`
    - `REPUTATION_ORACLE_FEE`
+   - `GAS_WARN_THRESHOLD` (optional; default `0.5`. If the native gas token balance falls below this amount, a Slack warning is sent.)
 
 2. **Launch a campaign (create manifest and escrow)**
    ```
@@ -67,9 +66,7 @@ A GitHub Action to create and manage escrows for market making campaigns using t
 # Secrets (keep these private)
 WEB3_PRIVATE_KEY=your_private_key_here
 WEB3_RPC_URL=https://your_rpc_url
-S3_ACCESS_KEY=your_s3_access_key
-S3_SECRET_KEY=your_s3_secret_key
-S3_BUCKET_NAME=you_s3_bucket_name
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
 
 # Public or non-sensitive
 CAMPAIGN_LAUNCH_ENABLED=true
@@ -87,6 +84,7 @@ RECORDING_ORACLE_ADDRESS=0x...
 RECORDING_ORACLE_FEE=1
 REPUTATION_ORACLE_ADDRESS=0x...
 REPUTATION_ORACLE_FEE=1
+NATIVE_GAS_WARN_THRESHOLD=0.5
 ```
 
 ## Manifest Example
