@@ -20,8 +20,8 @@ async function cancelEscrow(escrowAddress, env = process.env) {
 
     const escrowClient = await EscrowClient.build(signer);
 
-    await escrowClient.cancel(escrowAddress);
-    console.log(`Escrow ${escrowAddress} cancelled.`);
+    await escrowClient.requestCancellation(escrowAddress);
+    console.log(`Escrow ${escrowAddress} cancellation requested.`);
   } catch (e) {
     console.error(e);
     process.exit(1);
