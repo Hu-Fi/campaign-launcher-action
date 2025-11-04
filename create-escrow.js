@@ -1,6 +1,6 @@
 const ethers = require("ethers");
 const { EscrowClient, StakingClient } = require("@human-protocol/sdk");
-const { getTokenAddress } = require("./utils");
+const { getTokenAddress, sendSlackMessage } = require("./utils");
 const { v4: uuidV4 } = require("uuid");
 const ERC20ABI = require("./abi/ERC20.json");
 
