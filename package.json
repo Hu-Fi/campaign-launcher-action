@@ -12,7 +12,7 @@
   "license": "MIT",
   "description": "A GitHub Action to create an escrow every day for a campaign",
   "dependencies": {
-    "@human-protocol/sdk": "5.0.0-beta.0",
+    "@human-protocol/sdk": "5.0.0-beta.3",
     "dotenv": "^16.5.0",
     "ethers": "^6.15.0",
     "minio": "^8.0.5",
@@ -20,6 +20,6 @@
   },
   "packageManager": "yarn@4.9.4",
   "resolutions": {
-    "@human-protocol/core": "^5.0.0-beta.0"
+    "@human-protocol/core": "^5.0.0-beta.3"
   }
 }

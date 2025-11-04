@@ -1,5 +1,6 @@
 const { createManifest } = require("./create-manifest");
 const { createEscrow } = require("./create-escrow");
+const { sendSlackMessage } = require("./utils");
 
 (async () => {
   try {
@@ -11,7 +12,9 @@ const { createEscrow } = require("./create-escrow");
 
     console.log(`Escrow launched at ${escrowAddress}`);
   } catch (err) {
-    console.error("Error launching campaign:", err.message);
+    const msg = `Error launching campaign: ${err.message || err}`;
+    console.error(msg);
+    await sendSlackMessage(process.env, msg);
     process.exit(1);
   }
 })();

@@ -15,6 +15,32 @@ const getTokenAddress = (chainId, name) => {
   }
 };
 
+async function sendSlackMessage(env, text) {
+  const webhookUrl = env.SLACK_WEBHOOK_URL;
+  if (!webhookUrl) {
+    console.warn("SLACK_WEBHOOK_URL not set; cannot send Slack message.");
+    return false;
+  }
+
+  try {
+    const res = await fetch(webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+    if (!res.ok) {
+      const body = await res.text().catch(() => "");
+      console.warn(`Slack webhook error: ${res.status} ${res.statusText} ${body}`);
+      return false;
+    }
+    return true;
+  } catch (e) {
+    console.warn("Failed to send Slack message:", e.message || e);
+    return false;
+  }
+}
+
 module.exports = {
   getTokenAddress,
+  sendSlackMessage
 };

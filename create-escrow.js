@@ -15,21 +15,42 @@ async function createEscrow(env, manifest, manifestHash) {
   const signer = new ethers.Wallet(privateKey, provider);
 
   const escrowClient = await EscrowClient.build(signer);
-  
+
   const stakingClient = await StakingClient.build(signer);
 
   const tokenAddress = getTokenAddress(chainId, env.REWARD_TOKEN);
   const tokenContract = new ethers.Contract(
-          tokenAddress,
-          ERC20ABI,
-          signer
-        );
+    tokenAddress,
+    ERC20ABI,
+    signer
+  );
   const tokenDecimals = Number(await tokenContract.decimals()) || 18;
 
   const fundAmount = ethers.parseUnits(
-          env.REWARD_AMOUNT.toString(),
-          tokenDecimals
-        );
+    env.REWARD_AMOUNT.toString(),
+    tokenDecimals
+  );
+
+  // Check wallet balance
+  const walletTokenBalance = await tokenContract.balanceOf(signer.address);
+  if (walletTokenBalance < fundAmount) {
+    const required = ethers.formatUnits(fundAmount, tokenDecimals);
+    const available = ethers.formatUnits(walletTokenBalance, tokenDecimals);
+    throw new Error(
+      `Insufficient ${env.REWARD_TOKEN} balance to fund escrow. Required ${required}, available ${available}.`
+    );
+  }
+
+  // Warn if balance after funding current escrow won't cover the next escrow
+  const remainingAfterCurrent = walletTokenBalance - fundAmount;
+  if (remainingAfterCurrent < fundAmount) {
+    const requiredNext = ethers.formatUnits(fundAmount, tokenDecimals);
+    const availableNext = ethers.formatUnits(remainingAfterCurrent, tokenDecimals);
+    const msg = `Warn: Campaign launcher - Low ${env.REWARD_TOKEN} balance on chain ${chainId} for the next campaign. Address: ${signer.address} - Available: ${availableNext} - Required: ${requiredNext}.`;
+    if (await sendSlackMessage(env, msg)) {
+      console.log("Sent Slack low balance warning for next execution.");
+    }
+  }
 
   // Check if staked
   const { stakedAmount } = await stakingClient.getStakerInfo(signer.address);
@@ -41,7 +62,7 @@ async function createEscrow(env, manifest, manifestHash) {
   }
 
   console.log("Creating escrow...");
-  
+
   const escrowAddress = await escrowClient.createEscrow(tokenAddress, uuidV4());
   console.log(`Escrow created at ${escrowAddress}`);
 
@@ -50,7 +71,7 @@ async function createEscrow(env, manifest, manifestHash) {
 
   console.log("Setting up escrow...");
   const manifestString = JSON.stringify(manifest)
-  
+
   const escrowConfig = {
     exchangeOracle: env.EXCHANGE_ORACLE_ADDRESS,
     exchangeOracleFee: parseInt(env.EXCHANGE_ORACLE_FEE),
@@ -62,7 +83,22 @@ async function createEscrow(env, manifest, manifestHash) {
     manifestHash: manifestHash,
   };
 
-   await escrowClient.setup(escrowAddress, escrowConfig);
+  await escrowClient.setup(escrowAddress, escrowConfig);
+
+  // Warn if native gas token balance is low
+  const nativeBalance = await provider.getBalance(signer.address);
+  const gasWarnThresholdStr = (env.GAS_WARN_THRESHOLD || "0.5").toString();
+  const gasWarnThreshold = ethers.parseEther(gasWarnThresholdStr);
+
+  if (nativeBalance < gasWarnThreshold) {
+    const thresholdFmt = ethers.formatEther(gasWarnThreshold);
+    const nativeFmt = ethers.formatEther(nativeBalance);
+    const msg = `Warn: Campaign launcher - Low native gas balance on chain ${chainId}. Address: ${signer.address} - Available: ${nativeFmt} - Threshold: ${thresholdFmt}.`;
+    if (await sendSlackMessage(env, msg)) {
+      console.log("Sent Slack native gas low-balance warning.");
+    }
+  }
+
 
   return escrowAddress;
 }
