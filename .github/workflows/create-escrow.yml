@@ -27,7 +27,7 @@ jobs:
   create-escrow:
     runs-on: ubuntu-latest
     concurrency:
-      group: create-escrow
+      group: create-escrow-${{ inputs.SYMBOL }}-${{ inputs.EXCHANGE_NAME }}
       cancel-in-progress: false
     env:
       CHAIN_ID: ${{ inputs.CHAIN_ID }}
