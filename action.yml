@@ -24,16 +24,18 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Show .nvmrc content
+    - name: Read Node version from action’s .nvmrc
+      id: nvm
       shell: bash
       run: |
-        echo "GITHUB_ACTION_PATH = $GITHUB_ACTION_PATH"
-        echo ".nvmrc content ↓"
-        cat "$GITHUB_ACTION_PATH/.nvmrc" || echo "⚠️ .nvmrc not found!"
+        echo "GITHUB_ACTION_PATH=$GITHUB_ACTION_PATH"
+        cat "$GITHUB_ACTION_PATH/.nvmrc"
+        ver="$(tr -d ' \r\n' < "$GITHUB_ACTION_PATH/.nvmrc")"
+        echo "version=$ver" >> "$GITHUB_OUTPUT"
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
-        node-version-file: .nvmrc
+        node-version: ${{ steps.nvm.outputs.version }}
     - name: Install Corepack
       shell: bash
       run: npm install -g corepack
