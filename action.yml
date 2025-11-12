@@ -24,8 +24,12 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Display Node Version File
-      run: cat .nvmrc
+    - name: Show .nvmrc content
+      shell: bash
+      run: |
+        echo "GITHUB_ACTION_PATH = $GITHUB_ACTION_PATH"
+        echo ".nvmrc content ↓"
+        cat "$GITHUB_ACTION_PATH/.nvmrc" || echo "⚠️ .nvmrc not found!"
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
