@@ -1,0 +1,64 @@
+name: Create Escrow
+description: "Launch a campaign escrow with provided parameters"
+author: "Hu-Fi"
+inputs:
+  CHAIN_ID:                   { required: true }
+  DAILY_VOLUME_TARGET:        { required: true }
+  DURATION:                   { required: true }
+  EXCHANGE_NAME:              { required: true }
+  EXCHANGE_ORACLE_ADDRESS:    { required: true }
+  EXCHANGE_ORACLE_FEE:        { required: true }
+  GAS_WARN_THRESHOLD:         { required: true }
+  RECORDING_ORACLE_ADDRESS:   { required: true }
+  RECORDING_ORACLE_FEE:       { required: true }
+  REPUTATION_ORACLE_ADDRESS:  { required: true }
+  REPUTATION_ORACLE_FEE:      { required: true }
+  REWARD_AMOUNT:              { required: true }
+  REWARD_TOKEN:               { required: true }
+  START_DELAY:                { required: true }
+  SYMBOL:                     { required: true }
+  NODE_VERSION_FILE:
+    required: false
+    default: ".nvmrc"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Node.js
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: ${{ inputs.NODE_VERSION_FILE }}
+
+    - name: Install Corepack
+      shell: bash
+      run: npm install -g corepack
+    - name: Install action dependencies (optional)
+      shell: bash
+      run: |
+        cd "$GITHUB_ACTION_PATH"
+        if [ -f package.json ]; then
+          yarn install --immutable
+        fi
+    - name: Run launch-campaign script
+      shell: bash
+      env:
+        WEB3_RPC_URL: ${{ env.WEB3_RPC_URL }}
+        WEB3_PRIVATE_KEY: ${{ env.WEB3_PRIVATE_KEY }}
+        SLACK_WEBHOOK_URL: ${{ env.SLACK_WEBHOOK_URL }}
+        CHAIN_ID: ${{ inputs.CHAIN_ID }}
+        DAILY_VOLUME_TARGET: ${{ inputs.DAILY_VOLUME_TARGET }}
+        DURATION: ${{ inputs.DURATION }}
+        EXCHANGE_NAME: ${{ inputs.EXCHANGE_NAME }}
+        EXCHANGE_ORACLE_ADDRESS: ${{ inputs.EXCHANGE_ORACLE_ADDRESS }}
+        EXCHANGE_ORACLE_FEE: ${{ inputs.EXCHANGE_ORACLE_FEE }}
+        GAS_WARN_THRESHOLD: ${{ inputs.GAS_WARN_THRESHOLD }}
+        RECORDING_ORACLE_ADDRESS: ${{ inputs.RECORDING_ORACLE_ADDRESS }}
+        RECORDING_ORACLE_FEE: ${{ inputs.RECORDING_ORACLE_FEE }}
+        REPUTATION_ORACLE_ADDRESS: ${{ inputs.REPUTATION_ORACLE_ADDRESS }}
+        REPUTATION_ORACLE_FEE: ${{ inputs.REPUTATION_ORACLE_FEE }}
+        REWARD_AMOUNT: ${{ inputs.REWARD_AMOUNT }}
+        REWARD_TOKEN: ${{ inputs.REWARD_TOKEN }}
+        START_DELAY: ${{ inputs.START_DELAY }}
+        SYMBOL: ${{ inputs.SYMBOL }}
+      run: |
+        node "$GITHUB_ACTION_PATH/launch-campaign.js"
