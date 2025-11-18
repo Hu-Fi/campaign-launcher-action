@@ -1,0 +1,69 @@
+name: "Create Escrow"
+description: "Launch a campaign escrow with provided parameters"
+author: "Hu-Fi"
+inputs:
+  chain_id: { required: true }
+  daily_volume_target: { required: true }
+  duration: { required: true }
+  exchange_name: { required: true }
+  exchange_oracle_address: { required: true }
+  recording_oracle_address: { required: true }
+  reputation_oracle_address: { required: true }
+  gas_warn_threshold: { required: true }
+  reward_amount: { required: true }
+  reward_token: { required: true }
+  start_delay: { required: true }
+  symbol: { required: true }
+
+outputs:
+  escrow_address:
+    description: "The address of the created escrow contract"
+    value: ${{ steps.launch.outputs.escrow_address }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set action path
+      shell: bash
+      run: echo "ACTION_PATH=$GITHUB_ACTION_PATH" >> $GITHUB_ENV
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: ".nvmrc"
+        cache: "yarn"
+        cache-dependency-path: "${{ env.ACTION_PATH }}/yarn.lock"
+
+    - name: Install Corepack
+      shell: bash
+      run: npm install -g corepack
+
+    - name: Install action dependencies
+      shell: bash
+      run: |
+        cd "$ACTION_PATH"
+        yarn install --immutable
+
+    - name: Run launch-campaign script
+      id: launch
+      shell: bash
+      env:
+        WEB3_RPC_URL: ${{ env.WEB3_RPC_URL }}
+        WEB3_PRIVATE_KEY: ${{ env.WEB3_PRIVATE_KEY }}
+        SLACK_WEBHOOK_URL: ${{ env.SLACK_WEBHOOK_URL }}
+        CHAIN_ID: ${{ inputs.chain_id }}
+        DAILY_VOLUME_TARGET: ${{ inputs.daily_volume_target }}
+        DURATION: ${{ inputs.duration }}
+        EXCHANGE_NAME: ${{ inputs.exchange_name }}
+        EXCHANGE_ORACLE_ADDRESS: ${{ inputs.exchange_oracle_address }}
+        RECORDING_ORACLE_ADDRESS: ${{ inputs.recording_oracle_address }}
+        REPUTATION_ORACLE_ADDRESS: ${{ inputs.reputation_oracle_address }}
+        GAS_WARN_THRESHOLD: ${{ inputs.gas_warn_threshold }}
+        REWARD_AMOUNT: ${{ inputs.reward_amount }}
+        REWARD_TOKEN: ${{ inputs.reward_token }}
+        START_DELAY: ${{ inputs.start_delay }}
+        SYMBOL: ${{ inputs.symbol }}
+      run: |
+        cd "$ACTION_PATH"
+        ESCROW_ADDRESS=$(node launch-campaign.js | tail -n 1)
+        echo "escrow_address=$ESCROW_ADDRESS" >> "$GITHUB_OUTPUT"
