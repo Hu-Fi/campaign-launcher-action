@@ -2,70 +2,68 @@ name: "Create Escrow"
 description: "Launch a campaign escrow with provided parameters"
 author: "Hu-Fi"
 inputs:
-  CHAIN_ID:                   { required: true }
-  DAILY_VOLUME_TARGET:        { required: true }
-  DURATION:                   { required: true }
-  EXCHANGE_NAME:              { required: true }
-  EXCHANGE_ORACLE_ADDRESS:    { required: true }
-  EXCHANGE_ORACLE_FEE:        { required: true }
-  GAS_WARN_THRESHOLD:         { required: true }
-  RECORDING_ORACLE_ADDRESS:   { required: true }
-  RECORDING_ORACLE_FEE:       { required: true }
-  REPUTATION_ORACLE_ADDRESS:  { required: true }
-  REPUTATION_ORACLE_FEE:      { required: true }
-  REWARD_AMOUNT:              { required: true }
-  REWARD_TOKEN:               { required: true }
-  START_DELAY:                { required: true }
-  SYMBOL:                     { required: true }
-  NODE_VERSION_FILE:
-    required: false
-    default: ".nvmrc"
+  chain_id: { required: true }
+  daily_volume_target: { required: true }
+  duration: { required: true }
+  exchange_name: { required: true }
+  exchange_oracle_address: { required: true }
+  recording_oracle_address: { required: true }
+  reputation_oracle_address: { required: true }
+  gas_warn_threshold: { required: true }
+  reward_amount: { required: true }
+  reward_token: { required: true }
+  start_delay: { required: true }
+  symbol: { required: true }
+
+outputs:
+  escrow_address:
+    description: "The address of the created escrow contract"
+    value: ${{ steps.launch.outputs.escrow_address }}
 
 runs:
   using: "composite"
   steps:
-    - name: Read Node version from action’s .nvmrc
-      id: nvm
+    - name: Set action path
       shell: bash
-      run: |
-        echo "GITHUB_ACTION_PATH=$GITHUB_ACTION_PATH"
-        cat "$GITHUB_ACTION_PATH/.nvmrc"
-        ver="$(tr -d ' \r\n' < "$GITHUB_ACTION_PATH/.nvmrc")"
-        echo "version=$ver" >> "$GITHUB_OUTPUT"
+      run: echo "ACTION_PATH=$GITHUB_ACTION_PATH" >> $GITHUB_ENV
+
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ steps.nvm.outputs.version }}
+        node-version-file: ".nvmrc"
+        cache: "yarn"
+        cache-dependency-path: "${{ env.ACTION_PATH }}/yarn.lock"
+
     - name: Install Corepack
       shell: bash
       run: npm install -g corepack
-    - name: Install action dependencies (optional)
+
+    - name: Install action dependencies
       shell: bash
       run: |
-        cd "$GITHUB_ACTION_PATH"
-        if [ -f package.json ]; then
-          yarn install --immutable
-        fi
+        cd "$ACTION_PATH"
+        yarn install --immutable
+
     - name: Run launch-campaign script
+      id: launch
       shell: bash
       env:
         WEB3_RPC_URL: ${{ env.WEB3_RPC_URL }}
         WEB3_PRIVATE_KEY: ${{ env.WEB3_PRIVATE_KEY }}
         SLACK_WEBHOOK_URL: ${{ env.SLACK_WEBHOOK_URL }}
-        CHAIN_ID: ${{ inputs.CHAIN_ID }}
-        DAILY_VOLUME_TARGET: ${{ inputs.DAILY_VOLUME_TARGET }}
-        DURATION: ${{ inputs.DURATION }}
-        EXCHANGE_NAME: ${{ inputs.EXCHANGE_NAME }}
-        EXCHANGE_ORACLE_ADDRESS: ${{ inputs.EXCHANGE_ORACLE_ADDRESS }}
-        EXCHANGE_ORACLE_FEE: ${{ inputs.EXCHANGE_ORACLE_FEE }}
-        GAS_WARN_THRESHOLD: ${{ inputs.GAS_WARN_THRESHOLD }}
-        RECORDING_ORACLE_ADDRESS: ${{ inputs.RECORDING_ORACLE_ADDRESS }}
-        RECORDING_ORACLE_FEE: ${{ inputs.RECORDING_ORACLE_FEE }}
-        REPUTATION_ORACLE_ADDRESS: ${{ inputs.REPUTATION_ORACLE_ADDRESS }}
-        REPUTATION_ORACLE_FEE: ${{ inputs.REPUTATION_ORACLE_FEE }}
-        REWARD_AMOUNT: ${{ inputs.REWARD_AMOUNT }}
-        REWARD_TOKEN: ${{ inputs.REWARD_TOKEN }}
-        START_DELAY: ${{ inputs.START_DELAY }}
-        SYMBOL: ${{ inputs.SYMBOL }}
+        CHAIN_ID: ${{ inputs.chain_id }}
+        DAILY_VOLUME_TARGET: ${{ inputs.daily_volume_target }}
+        DURATION: ${{ inputs.duration }}
+        EXCHANGE_NAME: ${{ inputs.exchange_name }}
+        EXCHANGE_ORACLE_ADDRESS: ${{ inputs.exchange_oracle_address }}
+        RECORDING_ORACLE_ADDRESS: ${{ inputs.recording_oracle_address }}
+        REPUTATION_ORACLE_ADDRESS: ${{ inputs.reputation_oracle_address }}
+        GAS_WARN_THRESHOLD: ${{ inputs.gas_warn_threshold }}
+        REWARD_AMOUNT: ${{ inputs.reward_amount }}
+        REWARD_TOKEN: ${{ inputs.reward_token }}
+        START_DELAY: ${{ inputs.start_delay }}
+        SYMBOL: ${{ inputs.symbol }}
       run: |
-        node "$GITHUB_ACTION_PATH/launch-campaign.js"
+        cd "$ACTION_PATH"
+        ESCROW_ADDRESS=$(node launch-campaign.js | tail -n 1)
+        echo "escrow_address=$ESCROW_ADDRESS" >> "$GITHUB_OUTPUT"

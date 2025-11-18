@@ -15,7 +15,7 @@ name: Launch Campaign
 
 on:
   schedule:
-    - cron: "0 6 * * *"  # Run daily at 6 AM UTC
+    - cron: "0 6 * * *" # Run daily at 6 AM UTC
   workflow_dispatch:
 
 jobs:
@@ -67,10 +67,6 @@ Provide the following as secrets in your GitHub repository:
 - `WEB3_PRIVATE_KEY`: Private key of the wallet to use for transactions
 - `SLACK_WEBHOOK_URL`: Webhook url from Slack to send error notifications
 
-### Optional Parameters
-
-- `ADDITIONAL_DATA`: Optional additional data to include in the manifest
-
 ### Example Workflow
 
 See [`campaign-example.yml`](campaign-example.yml) for a complete example of how to use this action.
@@ -95,11 +91,10 @@ The action generates a manifest in the following format:
   "start_date": "2025-05-27T12:00:00.000Z",
   "end_date": "2025-05-28T12:00:00.000Z",
   "type": "MARKET_MAKING",
-  "daily_volume_target": 100000,
-  "additional_data": "optional"
+  "daily_volume_target": 100000
 }
 ```
 
 ## License
 
-MIT  "type":
+MIT
