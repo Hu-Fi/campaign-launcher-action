@@ -3,17 +3,17 @@ description: "Launch a campaign escrow with provided parameters"
 author: "Hu-Fi"
 inputs:
   chain_id: { required: true }
-  daily_volume_target: { required: true }
-  duration: { required: true }
   exchange_name: { required: true }
+  symbol: { required: true }
+  duration: { required: true }
+  start_delay: { required: true }
+  daily_volume_target: { required: true }
+  reward_token: { required: true }
+  reward_amount: { required: true }
   exchange_oracle_address: { required: true }
   recording_oracle_address: { required: true }
   reputation_oracle_address: { required: true }
   gas_warn_threshold: { required: true }
-  reward_amount: { required: true }
-  reward_token: { required: true }
-  start_delay: { required: true }
-  symbol: { required: true }
 
 outputs:
   escrow_address:
@@ -23,17 +23,20 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Read Node version from .nvmrc
-      id: read_node_version
+    - name: Prepare action configuration
+      id: prepare_config
       shell: bash
       run: |
         NODE_VERSION=$(cat "${{ github.action_path }}/.nvmrc")
         echo "node_version=$NODE_VERSION" >> "$GITHUB_OUTPUT"
 
+        YARN_LOCK_HASH=$(sha256sum "${{ github.action_path }}/yarn.lock" | awk '{print $1}')
+        echo "yarn_lock_hash=$YARN_LOCK_HASH" >> "$GITHUB_OUTPUT"
+
     - name: Set up Node.js
       uses: actions/setup-node@v6
       with:
-        node-version: ${{ steps.read_node_version.outputs.node_version }}
+        node-version: ${{ steps.prepare_config.outputs.node_version }}
         # Since it's composite action and paths resolved in a different way
         # we have to cache manually
         cache: ""
@@ -46,7 +49,7 @@ runs:
       uses: actions/cache@v5
       with:
         path: ${{ github.action_path }}/node_modules
-        key: ${{ runner.os }}-action-deps-${{ hashFiles('${{ github.action_path }}/yarn.lock') }}
+        key: ${{ runner.os }}-action-deps-${{ steps.prepare_config.outputs.yarn_lock_hash }}
 
     - name: Install action dependencies
       working-directory: ${{ github.action_path }}
@@ -62,17 +65,17 @@ runs:
         WEB3_PRIVATE_KEY: ${{ env.WEB3_PRIVATE_KEY }}
         SLACK_WEBHOOK_URL: ${{ env.SLACK_WEBHOOK_URL }}
         CHAIN_ID: ${{ inputs.chain_id }}
-        DAILY_VOLUME_TARGET: ${{ inputs.daily_volume_target }}
-        DURATION: ${{ inputs.duration }}
         EXCHANGE_NAME: ${{ inputs.exchange_name }}
+        SYMBOL: ${{ inputs.symbol }}
+        DURATION: ${{ inputs.duration }}
+        START_DELAY: ${{ inputs.start_delay }}
+        DAILY_VOLUME_TARGET: ${{ inputs.daily_volume_target }}
+        REWARD_TOKEN: ${{ inputs.reward_token }}
+        REWARD_AMOUNT: ${{ inputs.reward_amount }}
         EXCHANGE_ORACLE_ADDRESS: ${{ inputs.exchange_oracle_address }}
         RECORDING_ORACLE_ADDRESS: ${{ inputs.recording_oracle_address }}
         REPUTATION_ORACLE_ADDRESS: ${{ inputs.reputation_oracle_address }}
         GAS_WARN_THRESHOLD: ${{ inputs.gas_warn_threshold }}
-        REWARD_AMOUNT: ${{ inputs.reward_amount }}
-        REWARD_TOKEN: ${{ inputs.reward_token }}
-        START_DELAY: ${{ inputs.start_delay }}
-        SYMBOL: ${{ inputs.symbol }}
       run: |
         ESCROW_ADDRESS=$(node launch-campaign.js | tail -n 1)
         echo "escrow_address=$ESCROW_ADDRESS" >> "$GITHUB_OUTPUT"
