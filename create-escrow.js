@@ -119,6 +119,11 @@ if (require.main === module) {
   const manifestHash = process.env.MANIFEST_HASH;
   createEscrow(process.env, manifest, manifestHash)
     .then((escrowAddress) => {
+      /**
+       * In case you change format of this output message
+       * you might also need to change how it's being handled
+       * in action to produce outputs
+       */
       console.log(`Escrow created at ${escrowAddress}`);
     })
     .catch((e) => {
