@@ -25,7 +25,7 @@ This is a **composite GitHub Action** that can be used in your workflows to laun
     START_DELAY: "3600"
     # Daily trading volume target (in <quote> token)
     DAILY_VOLUME_TARGET: "100000.0"
-    # The token to use for rewards
+    # The token to use for rewards (only HMT and USDT are supported atm)
     REWARD_TOKEN: "HMT"
     # Total rewards amount for the whole campaign duration
     REWARD_AMOUNT: "1000"
@@ -46,15 +46,7 @@ This is a **composite GitHub Action** that can be used in your workflows to laun
 
 ### Example Workflow
 
-See [`campaign-example.yml`](.github/workflows/campaign-example.yml) for a complete example of how to use this action.
-
-### Canceling an Escrow
-
-To cancel an existing escrow manually, use the [`.github/workflows/cancel-escrow.yml`](.github/workflows/cancel-escrow.yml) workflow:
-
-1. Go to **Actions** → **Cancel Escrow**
-2. Click **Run workflow**
-3. Provide the escrow address as input
+See [`campaign-example.yml`](./examples/campaign-example.yml) for a complete example of how to use this action.
 
 ### Manifest Format
 
