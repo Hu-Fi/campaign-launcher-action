@@ -1,5 +1,10 @@
 const ethers = require("ethers");
-const { EscrowClient, StakingClient } = require("@human-protocol/sdk");
+const {
+  EscrowClient,
+  StakingClient,
+  KVStoreClient,
+  KVStoreKeys,
+} = require("@human-protocol/sdk");
 const { getTokenAddress, sendSlackMessage } = require("./utils");
 const { v4: uuidV4 } = require("uuid");
 const ERC20ABI = require("./abi/ERC20.json");
@@ -18,12 +23,10 @@ async function createEscrow(env, manifest, manifestHash) {
 
   const stakingClient = await StakingClient.build(signer);
 
+  const kvstoreClient = await KVStoreClient.build(signer);
+
   const tokenAddress = getTokenAddress(chainId, env.REWARD_TOKEN);
-  const tokenContract = new ethers.Contract(
-    tokenAddress,
-    ERC20ABI,
-    signer
-  );
+  const tokenContract = new ethers.Contract(tokenAddress, ERC20ABI, signer);
   const tokenDecimals = Number(await tokenContract.decimals()) || 18;
 
   const fundAmount = ethers.parseUnits(
@@ -45,7 +48,10 @@ async function createEscrow(env, manifest, manifestHash) {
   const remainingAfterCurrent = walletTokenBalance - fundAmount;
   if (remainingAfterCurrent < fundAmount) {
     const requiredNext = ethers.formatUnits(fundAmount, tokenDecimals);
-    const availableNext = ethers.formatUnits(remainingAfterCurrent, tokenDecimals);
+    const availableNext = ethers.formatUnits(
+      remainingAfterCurrent,
+      tokenDecimals
+    );
     const msg = `Warn: Campaign launcher - Low ${env.REWARD_TOKEN} balance on chain ${chainId} for the next campaign. Address: ${signer.address} - Available: ${availableNext} - Required: ${requiredNext}.`;
     if (await sendSlackMessage(env, msg)) {
       console.log("Sent Slack low balance warning for next execution.");
@@ -70,15 +76,21 @@ async function createEscrow(env, manifest, manifestHash) {
   await escrowClient.fund(escrowAddress, fundAmount);
 
   console.log("Setting up escrow...");
-  const manifestString = JSON.stringify(manifest)
+  const manifestString = JSON.stringify(manifest);
 
   const escrowConfig = {
     exchangeOracle: env.EXCHANGE_ORACLE_ADDRESS,
-    exchangeOracleFee: parseInt(env.EXCHANGE_ORACLE_FEE),
+    exchangeOracleFee: parseInt(
+      await kvstoreClient.get(env.EXCHANGE_ORACLE_ADDRESS, KVStoreKeys.fee)
+    ),
     recordingOracle: env.RECORDING_ORACLE_ADDRESS,
-    recordingOracleFee: parseInt(env.RECORDING_ORACLE_FEE),
+    recordingOracleFee: parseInt(
+      await kvstoreClient.get(env.RECORDING_ORACLE_ADDRESS, KVStoreKeys.fee)
+    ),
     reputationOracle: env.REPUTATION_ORACLE_ADDRESS,
-    reputationOracleFee: parseInt(env.REPUTATION_ORACLE_FEE),
+    reputationOracleFee: parseInt(
+      await kvstoreClient.get(env.REPUTATION_ORACLE_ADDRESS, KVStoreKeys.fee)
+    ),
     manifest: manifestString,
     manifestHash: manifestHash,
   };
@@ -99,7 +111,6 @@ async function createEscrow(env, manifest, manifestHash) {
     }
   }
 
-
   return escrowAddress;
 }
 
@@ -108,6 +119,11 @@ if (require.main === module) {
   const manifestHash = process.env.MANIFEST_HASH;
   createEscrow(process.env, manifest, manifestHash)
     .then((escrowAddress) => {
+      /**
+       * In case you change format of this output message
+       * you might also need to change how it's being handled
+       * in action to produce outputs
+       */
       console.log(`Escrow created at ${escrowAddress}`);
     })
     .catch((e) => {

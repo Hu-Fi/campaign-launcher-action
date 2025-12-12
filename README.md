@@ -4,100 +4,63 @@ A GitHub Action to create and manage escrows for market making campaigns using t
 
 ## Usage
 
-1. **Set up environment variables**  
-   Set the following environment variables in your workflow or CI/CD environment:
+This is a **composite GitHub Action** that can be used in your workflows to launch market making campaigns.
 
-   **Secrets (keep these private):**
-   - `WEB3_PRIVATE_KEY`
-   - `WEB3_RPC_URL`
-   - `SLACK_WEBHOOK_URL` (optional; used to warn if balance is insufficient to fund the next scheduled escrow and/or native gas is low)
+### Basic Setup
 
-   **Public or non-sensitive (can be set as GitHub environment variables):**
-   - `CAMPAIGN_LAUNCH_ENABLED`
-   - `CHAIN_ID`
-   - `EXCHANGE_NAME`
-   - `SYMBOL`
-   - `REWARD_TOKEN`
-   - `REWARD_AMOUNT`
-   - `START_DELAY` (in seconds; period to add to current time for campaign start)
-   - `DURATION` (in hours)
-   - `DAILY_VOLUME_TARGET`
-   - `EXCHANGE_ORACLE_ADDRESS`
-   - `EXCHANGE_ORACLE_FEE`
-   - `RECORDING_ORACLE_ADDRESS`
-   - `RECORDING_ORACLE_FEE`
-   - `REPUTATION_ORACLE_ADDRESS`
-   - `REPUTATION_ORACLE_FEE`
-   - `GAS_WARN_THRESHOLD` (optional; default `0.5`. If the native gas token balance falls below this amount, a Slack warning is sent.)
+1. **In your workflow file**, use the action as follows:
 
-2. **Launch a campaign (create manifest and escrow)**
-   ```
-   node launch-campaign.js
-   ```
-   This will create and upload a manifest to S3 and launch an escrow using the manifest.
-
-3. **Cancel an escrow**
-   ```
-   ESCROW_ADDRESS=<escrow_address> node cancel-escrow.js
-   ```
-   Or, if using the GitHub Actions workflow, provide the escrow address as an input parameter.
-
-## Files
-
-- `create-manifest.js`: Script to create and upload a campaign manifest to S3.
-- `create-escrow.js`: Script to create and fund an escrow using a manifest.
-- `cancel-escrow.js`: Script to cancel an escrow.
-- `launch-campaign.js`: Script to create a manifest and immediately launch an escrow.
-
-## Example GitHub Actions Workflows
-
-**Daily Escrow Creation (`.github/workflows/daily-run.yml`):**
-- Uses secrets for sensitive values and environment variables for public values.
-- Calls `launch-campaign.js` to create a manifest and escrow.
-
-**Manual Escrow Cancellation (`.github/workflows/cancel-escrow.yml`):**
-- Cancels an escrow by address using secrets for sensitive values.
-
-## .env Example
-
-> **Note:** The `.env` file is not required, but you can use this format for reference or local testing.
-
-```
-# Secrets (keep these private)
-WEB3_PRIVATE_KEY=your_private_key_here
-WEB3_RPC_URL=https://your_rpc_url
-SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
-
-# Public or non-sensitive
-CAMPAIGN_LAUNCH_ENABLED=true
-CHAIN_ID=11155111
-EXCHANGE_NAME=mexc
-SYMBOL=XIN/USDT
-REWARD_TOKEN=USDT
-REWARD_AMOUNT=100
-START_DELAY=3600
-DURATION=24
-DAILY_VOLUME_TARGET=1000
-EXCHANGE_ORACLE_ADDRESS=0x...
-EXCHANGE_ORACLE_FEE=1
-RECORDING_ORACLE_ADDRESS=0x...
-RECORDING_ORACLE_FEE=1
-REPUTATION_ORACLE_ADDRESS=0x...
-REPUTATION_ORACLE_FEE=1
-NATIVE_GAS_WARN_THRESHOLD=0.5
+```yaml
+- uses: Hu-Fi/campaign-launcher-action@v1
+  with:
+    # Blockchain chain ID where to launch campaign
+    CHAIN_ID: "137"
+    # Exchange name where you want campaign paticipants to trade
+    EXCHANGE_NAME: "mexc"
+    # Trading pair symbol for exchange (in <base>/<quote> format)
+    SYMBOL: "HMT/USDT"
+    # Duration of the campaign in hours
+    DURATION: "24"
+    # Delay in seconds before the campaign starts (added to current time)
+    START_DELAY: "3600"
+    # Daily trading volume target (in <quote> token)
+    DAILY_VOLUME_TARGET: "100000.0"
+    # The token to use for rewards (only HMT and USDT are supported atm)
+    REWARD_TOKEN: "HMT"
+    # Total rewards amount for the whole campaign duration
+    REWARD_AMOUNT: "1000"
+    # Address of Exchange Oracle that will handle campaign
+    EXCHANGE_ORACLE_ADDRESS: "0x..."
+    # Address of Recording Oracle that will handle campaign
+    RECORDING_ORACLE_ADDRESS: "0x..."
+    # Address of Reputation Oracle that will handle campaign
+    REPUTATION_ORACLE_ADDRESS: "0x..."
+  env:
+    # JSON-RPC endpoint for the blockchain
+    WEB3_RPC_URL: ${{ secrets.WEB3_RPC_URL }}
+    # Private key of the wallet to use for transactions
+    WEB3_PRIVATE_KEY: ${{ secrets.WEB3_PRIVATE_KEY }}
+    # Webhook url of Slack channel where to send notifications. Optional
+    SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
 
-## Manifest Example
+### Example Workflow
+
+See [`campaign-example.yml`](./examples/campaign-example.yml) for a complete example of how to use this action.
+
+### Manifest Format
+
+The action generates a manifest in the following format:
 
 ```json
 {
+  "type": "MARKET_MAKING",
   "exchange": "mexc",
   "pair": "HMT/USDT",
   "fund_token": "HMT",
+  "daily_volume_target": 100000.0,
   "start_date": "2025-05-27T12:00:00.000Z",
-  "end_date": "2025-05-28T12:00:00.000Z",
-  "type": "MARKET_MAKING",
-  "daily_volume_target": 1.01
+  "end_date": "2025-05-28T12:00:00.000Z"
 }
 ```
 
