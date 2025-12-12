@@ -4,72 +4,47 @@ A GitHub Action to create and manage escrows for market making campaigns using t
 
 ## Usage
 
-This is a **composite GitHub Action** that can be used in your workflows to launch volume campaigns.
+This is a **composite GitHub Action** that can be used in your workflows to launch market making campaigns.
 
 ### Basic Setup
 
 1. **In your workflow file**, use the action as follows:
 
 ```yaml
-name: Launch Campaign
-
-on:
-  schedule:
-    - cron: "0 6 * * *" # Run daily at 6 AM UTC
-  workflow_dispatch:
-
-jobs:
-  launch-campaign:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: Hu-Fi/campaign-launcher-action@v0
-        with:
-          CHAIN_ID: "137"
-          DAILY_VOLUME_TARGET: "100000"
-          DURATION: "24"
-          EXCHANGE_NAME: "mexc"
-          SYMBOL: "HMT/USDT"
-          REWARD_TOKEN: "HMT"
-          REWARD_AMOUNT: "1000"
-          START_DELAY: "3600"
-          RECORDING_ORACLE_ADDRESS: "0x..."
-          RECORDING_ORACLE_FEE: "10"
-          REPUTATION_ORACLE_ADDRESS: "0x..."
-          REPUTATION_ORACLE_FEE: "10"
-        env:
-          WEB3_RPC_URL: ${{ secrets.WEB3_RPC_URL }}
-          WEB3_PRIVATE_KEY: ${{ secrets.WEB3_PRIVATE_KEY }}
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+- uses: Hu-Fi/campaign-launcher-action@v1
+  with:
+    # Blockchain chain ID where to launch campaign
+    CHAIN_ID: "137"
+    # Exchange name where you want campaign paticipants to trade
+    EXCHANGE_NAME: "mexc"
+    # Trading pair symbol for exchange (in <base>/<quote> format)
+    SYMBOL: "HMT/USDT"
+    # Duration of the campaign in hours
+    DURATION: "24"
+    # Daily trading volume target (in <quote> token)
+    DAILY_VOLUME_TARGET: "100000.0"
+    # The token to use for rewards
+    REWARD_TOKEN: "HMT"
+    # Total rewards amount for the whole campaign duration
+    REWARD_AMOUNT: "1000"
+    # Delay in seconds before the campaign starts (added to current time)
+    START_DELAY: "3600"
+    # Address of Recording Oracle that will handle campaign
+    RECORDING_ORACLE_ADDRESS: "0x..."
+    # Address of Reputation Oracle that will handle campaign
+    REPUTATION_ORACLE_ADDRESS: "0x..."
+  env:
+    # JSON-RPC endpoint for the blockchain
+    WEB3_RPC_URL: ${{ secrets.WEB3_RPC_URL }}
+    # Private key of the wallet to use for transactions
+    WEB3_PRIVATE_KEY: ${{ secrets.WEB3_PRIVATE_KEY }}
+    # Webhook url of Slack channel where to send notifications. Optional
+    SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
-
-### Input Parameters
-
-All inputs are **required**:
-
-- `CHAIN_ID`: The blockchain chain ID (e.g., `137` for Polygon)
-- `EXCHANGE_NAME`: The exchange name (e.g., `mexc`, `bybit`)
-- `SYMBOL`: The trading pair symbol (e.g., `HMT/USDT`)
-- `REWARD_TOKEN`: The token to use for rewards (e.g., `HMT`, `USDT`)
-- `REWARD_AMOUNT`: The amount of tokens to reward
-- `START_DELAY`: Delay in seconds before the campaign starts (added to current time)
-- `DURATION`: Campaign duration in days
-- `DAILY_VOLUME_TARGET`: Daily volume target as a float
-- `RECORDING_ORACLE_ADDRESS`: Address of the recording oracle
-- `RECORDING_ORACLE_FEE`: Fee for the recording oracle
-- `REPUTATION_ORACLE_ADDRESS`: Address of the reputation oracle
-- `REPUTATION_ORACLE_FEE`: Fee for the reputation oracle
-
-### Environment Variables (Secrets)
-
-Provide the following as secrets in your GitHub repository:
-
-- `WEB3_RPC_URL`: JSON-RPC endpoint for the blockchain
-- `WEB3_PRIVATE_KEY`: Private key of the wallet to use for transactions
-- `SLACK_WEBHOOK_URL`: Webhook url from Slack to send error notifications
 
 ### Example Workflow
 
-See [`campaign-example.yml`](campaign-example.yml) for a complete example of how to use this action.
+See [`campaign-example.yml`](.github/workflows/campaign-example.yml) for a complete example of how to use this action.
 
 ### Canceling an Escrow
 
@@ -85,13 +60,13 @@ The action generates a manifest in the following format:
 
 ```json
 {
+  "type": "MARKET_MAKING",
   "exchange": "mexc",
   "pair": "HMT/USDT",
   "fund_token": "HMT",
+  "daily_volume_target": 100000.0,
   "start_date": "2025-05-27T12:00:00.000Z",
-  "end_date": "2025-05-28T12:00:00.000Z",
-  "type": "MARKET_MAKING",
-  "daily_volume_target": 100000
+  "end_date": "2025-05-28T12:00:00.000Z"
 }
 ```
 
