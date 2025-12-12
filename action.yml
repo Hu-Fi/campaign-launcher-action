@@ -25,14 +25,16 @@ runs:
   steps:
     - name: Set action path
       shell: bash
-      run: echo "ACTION_PATH=$GITHUB_ACTION_PATH" >> $GITHUB_ENV
+      run: echo "$GITHUB_ACTION_PATH" >> $GITHUB_PATH
+      env:
+        GITHUB_ACTION_PATH: ${{ github.action_path }}
 
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
         node-version-file: ".nvmrc"
         cache: "yarn"
-        cache-dependency-path: "${{ env.ACTION_PATH }}/yarn.lock"
+        cache-dependency-path: "**/yarn.lock"
 
     - name: Install Corepack
       shell: bash
@@ -40,9 +42,7 @@ runs:
 
     - name: Install action dependencies
       shell: bash
-      run: |
-        cd "$ACTION_PATH"
-        yarn install --immutable
+      run: yarn install --immutable
 
     - name: Run launch-campaign script
       id: launch
@@ -64,6 +64,5 @@ runs:
         START_DELAY: ${{ inputs.start_delay }}
         SYMBOL: ${{ inputs.symbol }}
       run: |
-        cd "$ACTION_PATH"
         ESCROW_ADDRESS=$(node launch-campaign.js | tail -n 1)
         echo "escrow_address=$ESCROW_ADDRESS" >> "$GITHUB_OUTPUT"
