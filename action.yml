@@ -77,5 +77,5 @@ runs:
         REPUTATION_ORACLE_ADDRESS: ${{ inputs.reputation_oracle_address }}
         GAS_WARN_THRESHOLD: ${{ inputs.gas_warn_threshold }}
       run: |
-        ESCROW_ADDRESS=$(node launch-campaign.js | tail -n 1 | awk '{print $NF}')
+        ESCROW_ADDRESS=$(yarn launch-campaign | tail -n 1 | awk '{print $NF}')
         echo "escrow_address=$ESCROW_ADDRESS" >> "$GITHUB_OUTPUT"

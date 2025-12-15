@@ -1,22 +1,38 @@
 {
   "name": "campaign-launcher-action",
+  "description": "A GitHub Action to launch HuFi campaigns",
+  "author": "HUMAN Protocol",
   "version": "1.0.0",
-  "main": "create-escrow.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "create-escrow": "node create-escrow.js",
-    "cancel-escrow": "node cancel-escrow.js",
-    "update-config": "node update-config.js"
-  },
-  "author": "Human Protocol",
   "license": "MIT",
-  "description": "A GitHub Action to create an escrow every day for a campaign",
+  "scripts": {
+    "clean": "tsc --build --clean && rm -rf dist",
+    "build": "tsc --build",
+    "launch-campaign": "ts-node src/launch-campaign.ts",
+    "lint": "eslint \"src/**/*.ts\"",
+    "typecheck": "tsc --noEmit",
+    "prepare": "husky"
+  },
   "dependencies": {
     "@human-protocol/sdk": "5.0.0",
-    "dotenv": "^16.5.0",
     "ethers": "^6.15.0",
-    "minio": "^8.0.5",
-    "uuid": "^11.1.0"
+    "joi": "^18.0.2",
+    "minio": "^8.0.5"
   },
-  "packageManager": "yarn@4.9.4"
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@types/node": "^25.0.2",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-prettier": "^5.5.4",
+    "globals": "^16.5.0",
+    "husky": "^9.1.7",
+    "prettier": "^3.7.4",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.49.0"
+  },
+  "packageManager": "yarn@4.12.0"
 }
