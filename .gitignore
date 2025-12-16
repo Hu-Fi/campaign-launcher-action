@@ -1,3 +1,29 @@
-.env
 node_modules
+
+# Modern Yarn files
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# dotenv environment variable files
+.env
+.env.local
+.env.*.local
+
 .secrets
+
+# OS
+.DS_Store
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Compiled output
+dist
+
+# Local
+*.out

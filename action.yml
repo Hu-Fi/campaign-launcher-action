@@ -63,8 +63,8 @@ runs:
       env:
         WEB3_RPC_URL: ${{ env.WEB3_RPC_URL }}
         WEB3_PRIVATE_KEY: ${{ env.WEB3_PRIVATE_KEY }}
+        GAS_WARN_THRESHOLD: ${{ inputs.gas_warn_threshold }}
         SLACK_WEBHOOK_URL: ${{ env.SLACK_WEBHOOK_URL }}
-        CHAIN_ID: ${{ inputs.chain_id }}
         EXCHANGE_NAME: ${{ inputs.exchange_name }}
         SYMBOL: ${{ inputs.symbol }}
         DURATION: ${{ inputs.duration }}
@@ -75,7 +75,6 @@ runs:
         EXCHANGE_ORACLE_ADDRESS: ${{ inputs.exchange_oracle_address }}
         RECORDING_ORACLE_ADDRESS: ${{ inputs.recording_oracle_address }}
         REPUTATION_ORACLE_ADDRESS: ${{ inputs.reputation_oracle_address }}
-        GAS_WARN_THRESHOLD: ${{ inputs.gas_warn_threshold }}
       run: |
-        ESCROW_ADDRESS=$(yarn launch-campaign | tail -n 1 | awk '{print $NF}')
+        ESCROW_ADDRESS=$(<escrow_address.out)
         echo "escrow_address=$ESCROW_ADDRESS" >> "$GITHUB_OUTPUT"

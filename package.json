@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "@human-protocol/sdk": "5.0.0",
-    "ethers": "^6.15.0",
+    "dotenv": "^17.2.3",
+    "ethers": "~6.15.0",
     "joi": "^18.0.2",
     "minio": "^8.0.5"
   },

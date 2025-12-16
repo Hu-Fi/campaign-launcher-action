@@ -19,7 +19,7 @@ type MarketMakingCampaignManifest = CampaignManifestBase & {
   daily_volume_target: number;
 };
 
-type CampaignManifest = MarketMakingCampaignManifest;
+export type CampaignManifest = MarketMakingCampaignManifest;
 
 const marketMakingInputSchema = Joi.object({
   exchangeName: Joi.string().min(2).required(),
