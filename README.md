@@ -13,8 +13,6 @@ This is a **composite GitHub Action** that can be used in your workflows to laun
 ```yaml
 - uses: Hu-Fi/campaign-launcher-action@v1
   with:
-    # Blockchain chain ID where to launch campaign
-    CHAIN_ID: "137"
     # Exchange name where you want campaign paticipants to trade
     EXCHANGE_NAME: "mexc"
     # Trading pair symbol for exchange (in <base>/<quote> format)
@@ -36,7 +34,7 @@ This is a **composite GitHub Action** that can be used in your workflows to laun
     # Address of Reputation Oracle that will handle campaign
     REPUTATION_ORACLE_ADDRESS: "0x..."
   env:
-    # JSON-RPC endpoint for the blockchain
+    # JSON-RPC endpoint for the blockchain. Campaign will be launched on its chain
     WEB3_RPC_URL: ${{ secrets.WEB3_RPC_URL }}
     # Private key of the wallet to use for transactions
     WEB3_PRIVATE_KEY: ${{ secrets.WEB3_PRIVATE_KEY }}
@@ -57,10 +55,9 @@ The action generates a manifest in the following format:
   "type": "MARKET_MAKING",
   "exchange": "mexc",
   "pair": "HMT/USDT",
-  "fund_token": "HMT",
-  "daily_volume_target": 100000.0,
   "start_date": "2025-05-27T12:00:00.000Z",
-  "end_date": "2025-05-28T12:00:00.000Z"
+  "end_date": "2025-05-28T12:00:00.000Z",
+  "daily_volume_target": 100000.0
 }
 ```
 

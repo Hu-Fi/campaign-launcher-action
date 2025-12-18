@@ -2,7 +2,6 @@ name: "Create Escrow"
 description: "Launch a campaign escrow with provided parameters"
 author: "Hu-Fi"
 inputs:
-  chain_id: { required: true }
   exchange_name: { required: true }
   symbol: { required: true }
   duration: { required: true }
@@ -13,7 +12,6 @@ inputs:
   exchange_oracle_address: { required: true }
   recording_oracle_address: { required: true }
   reputation_oracle_address: { required: true }
-  gas_warn_threshold: { required: true }
 
 outputs:
   escrow_address:
@@ -64,7 +62,6 @@ runs:
         WEB3_RPC_URL: ${{ env.WEB3_RPC_URL }}
         WEB3_PRIVATE_KEY: ${{ env.WEB3_PRIVATE_KEY }}
         SLACK_WEBHOOK_URL: ${{ env.SLACK_WEBHOOK_URL }}
-        CHAIN_ID: ${{ inputs.chain_id }}
         EXCHANGE_NAME: ${{ inputs.exchange_name }}
         SYMBOL: ${{ inputs.symbol }}
         DURATION: ${{ inputs.duration }}
@@ -75,7 +72,6 @@ runs:
         EXCHANGE_ORACLE_ADDRESS: ${{ inputs.exchange_oracle_address }}
         RECORDING_ORACLE_ADDRESS: ${{ inputs.recording_oracle_address }}
         REPUTATION_ORACLE_ADDRESS: ${{ inputs.reputation_oracle_address }}
-        GAS_WARN_THRESHOLD: ${{ inputs.gas_warn_threshold }}
       run: |
-        ESCROW_ADDRESS=$(node launch-campaign.js | tail -n 1 | awk '{print $NF}')
+        ESCROW_ADDRESS=$(<escrow_address.out)
         echo "escrow_address=$ESCROW_ADDRESS" >> "$GITHUB_OUTPUT"
