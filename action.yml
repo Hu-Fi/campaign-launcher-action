@@ -2,7 +2,6 @@ name: "Create Escrow"
 description: "Launch a campaign escrow with provided parameters"
 author: "Hu-Fi"
 inputs:
-  chain_id: { required: true }
   exchange_name: { required: true }
   symbol: { required: true }
   duration: { required: true }
@@ -13,7 +12,6 @@ inputs:
   exchange_oracle_address: { required: true }
   recording_oracle_address: { required: true }
   reputation_oracle_address: { required: true }
-  gas_warn_threshold: { required: true }
 
 outputs:
   escrow_address:
@@ -63,7 +61,6 @@ runs:
       env:
         WEB3_RPC_URL: ${{ env.WEB3_RPC_URL }}
         WEB3_PRIVATE_KEY: ${{ env.WEB3_PRIVATE_KEY }}
-        GAS_WARN_THRESHOLD: ${{ inputs.gas_warn_threshold }}
         SLACK_WEBHOOK_URL: ${{ env.SLACK_WEBHOOK_URL }}
         EXCHANGE_NAME: ${{ inputs.exchange_name }}
         SYMBOL: ${{ inputs.symbol }}

@@ -5,7 +5,6 @@ if (process.env.GITHUB_ACTIONS !== 'true') {
   dotenv.config({ path: ['.env.local', '.env'] });
 }
 
-const MIN_GAS_WARN_THRESHOLD = 0.5;
 const MIN_START_DELAY = 0;
 
 const evmAddressSchema = Joi.string().pattern(/^0x[0-9a-fA-F]{40}$/);
@@ -13,7 +12,6 @@ const evmAddressSchema = Joi.string().pattern(/^0x[0-9a-fA-F]{40}$/);
 type EnvConfig = {
   WEB3_RPC_URL: string;
   WEB3_PRIVATE_KEY: string;
-  GAS_WARN_THRESHOLD: number;
   SLACK_WEBHOOK_URL?: string;
   EXCHANGE_NAME: string;
   SYMBOL: string;
@@ -30,10 +28,6 @@ type EnvConfig = {
 const envConfigSchema = Joi.object({
   WEB3_RPC_URL: Joi.string().uri({ scheme: ['http', 'https'] }),
   WEB3_PRIVATE_KEY: Joi.string().pattern(/^(0x)?[a-fA-F0-9]{64}$/),
-  GAS_WARN_THRESHOLD: Joi.number()
-    .min(MIN_GAS_WARN_THRESHOLD)
-    .optional()
-    .default(MIN_GAS_WARN_THRESHOLD),
   SLACK_WEBHOOK_URL: Joi.string()
     .uri({ scheme: ['https'] })
     .optional(),
@@ -60,7 +54,6 @@ type LauncherConfig = {
   web3: {
     rpcUrl: string;
     launcherPrivateKey: string;
-    gasWarnThreshold: number;
   };
   campaign: {
     exchangeName: string;
@@ -93,7 +86,6 @@ function loadEnvConfig(): LauncherConfig {
       web3: {
         rpcUrl: parsedEnvConfig.WEB3_RPC_URL,
         launcherPrivateKey: parsedEnvConfig.WEB3_PRIVATE_KEY,
-        gasWarnThreshold: parsedEnvConfig.GAS_WARN_THRESHOLD,
       },
       campaign: {
         exchangeName: parsedEnvConfig.EXCHANGE_NAME,

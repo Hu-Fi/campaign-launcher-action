@@ -1,7 +1,5 @@
 import fs from 'fs';
 
-import { ethers } from 'ethers';
-
 import { createEscrow } from './create-escrow';
 import { createMarketMakingCampaignManifest } from './create-manifest';
 import launcherConfig from './env-config';
@@ -47,26 +45,6 @@ void (async () => {
       fs.writeFileSync('escrow_address.out', escrowAddress);
     } catch (error) {
       console.warn('Failed to write escrow address to output file', error);
-    }
-
-    try {
-      // Warn if native gas token balance is low
-      const gasWarnThreshold = ethers.parseEther(
-        launcherConfig.web3.gasWarnThreshold.toString(),
-      );
-
-      const nativeBalance = await signer.provider.getBalance(signer.address);
-
-      if (nativeBalance < gasWarnThreshold) {
-        const warnMessage = `
-          Warning: low native gas balance on chain ${signer.chainId} for ${signer.address}.
-          Available: ${ethers.formatEther(nativeBalance)}.
-          Threshold: ${ethers.formatEther(gasWarnThreshold)}
-        `;
-        await maybeSendSlackMessage(warnMessage);
-      }
-    } catch (noop) {
-      /* noop */
     }
 
     process.exit(0);
