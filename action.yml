@@ -73,5 +73,6 @@ runs:
         RECORDING_ORACLE_ADDRESS: ${{ inputs.recording_oracle_address }}
         REPUTATION_ORACLE_ADDRESS: ${{ inputs.reputation_oracle_address }}
       run: |
+        yarn launch-campaign
         ESCROW_ADDRESS=$(<escrow_address.out)
         echo "escrow_address=$ESCROW_ADDRESS" >> "$GITHUB_OUTPUT"
