@@ -121,6 +121,7 @@ export async function createEscrow(
   );
 
   console.log('Creating escrow...');
+  const latestNonce = await signer.getNonce('latest');
   const escrowClient = await EscrowClient.build(signer);
   const escrowAddress = await escrowClient.createFundAndSetupEscrow(
     fundTokenAddress,
@@ -135,6 +136,9 @@ export async function createEscrow(
       recordingOracleFee: BigInt(recordingOracleFee),
       reputationOracle: reputationOracleAddress,
       reputationOracleFee: BigInt(reputationOracleFee),
+    },
+    {
+      nonce: latestNonce,
     },
   );
 
