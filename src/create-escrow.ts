@@ -1,10 +1,6 @@
-import assert from 'assert';
-
 import {
   EscrowClient,
   StakingClient,
-  KVStoreClient,
-  KVStoreKeys,
   NETWORKS,
   ChainId,
 } from '@human-protocol/sdk';
@@ -99,27 +95,6 @@ export async function createEscrow(
     console.log('Sufficient allowance to create escrow');
   }
 
-  console.log('Getting oracles data...');
-  const kvstoreClient = await KVStoreClient.build(signer);
-  const [exchangeOracleFee, recordingOracleFee, reputationOracleFee] =
-    await Promise.all([
-      kvstoreClient.get(exchangeOracleAddress, KVStoreKeys.fee),
-      kvstoreClient.get(recordingOracleAddress, KVStoreKeys.fee),
-      kvstoreClient.get(reputationOracleAddress, KVStoreKeys.fee),
-    ]);
-  assert(
-    exchangeOracleFee,
-    `Exchange Oracle has invalid fee: ${exchangeOracleFee}`,
-  );
-  assert(
-    recordingOracleFee,
-    `Recording Oracle has invalid fee: ${recordingOracleFee}`,
-  );
-  assert(
-    reputationOracleFee,
-    `Reputation Oracle has invalid fee: ${reputationOracleFee}`,
-  );
-
   console.log('Creating escrow...');
   const latestNonce = await signer.getNonce('latest');
   const escrowClient = await EscrowClient.build(signer);
@@ -131,11 +106,8 @@ export async function createEscrow(
       manifest: JSON.stringify(manifest),
       manifestHash,
       exchangeOracle: exchangeOracleAddress,
-      exchangeOracleFee: BigInt(exchangeOracleFee),
       recordingOracle: recordingOracleAddress,
-      recordingOracleFee: BigInt(recordingOracleFee),
       reputationOracle: reputationOracleAddress,
-      reputationOracleFee: BigInt(reputationOracleFee),
     },
     {
       nonce: latestNonce,
