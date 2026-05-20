@@ -3,6 +3,7 @@ import {
   StakingClient,
   NETWORKS,
   ChainId,
+  type TransactionOverrides,
 } from '@human-protocol/sdk';
 import { ethers, type InterfaceAbi } from 'ethers';
 
@@ -11,6 +12,8 @@ import { type CampaignManifest } from './create-manifest';
 import { getTokenAddress, type CustomSigner } from './utils';
 
 const MIN_STAKED_AMOUNT_HMT = ethers.parseEther('0.001');
+const TX_WAIT_TIMEOUT_MS = 2 * 60_000;
+const TX_CONFIRMATIONS = 1;
 
 export async function createEscrow(
   signer: CustomSigner,
@@ -24,6 +27,11 @@ export async function createEscrow(
     reputationOracleAddress: string;
   },
 ): Promise<string> {
+  const txOptions: TransactionOverrides = {
+    confirmations: TX_CONFIRMATIONS,
+    timeoutMs: TX_WAIT_TIMEOUT_MS,
+  };
+
   console.log('Checking staking info...');
   const stakingClient = await StakingClient.build(signer);
   const { stakedAmount } = await stakingClient.getStakerInfo(signer.address);
@@ -31,8 +39,8 @@ export async function createEscrow(
     console.log(
       `Provided launcher hasn't staked. Staking ${ethers.formatEther(MIN_STAKED_AMOUNT_HMT)} HMT...`,
     );
-    await stakingClient.approveStake(MIN_STAKED_AMOUNT_HMT);
-    await stakingClient.stake(MIN_STAKED_AMOUNT_HMT);
+    await stakingClient.approveStake(MIN_STAKED_AMOUNT_HMT, txOptions);
+    await stakingClient.stake(MIN_STAKED_AMOUNT_HMT, txOptions);
   } else {
     console.log(
       `Stake eligible: ${ethers.formatUnits(stakedAmount, HMT_TOKEN_DECIMALS)}`,
@@ -90,7 +98,7 @@ export async function createEscrow(
       allowanceSpender,
       fundAmount,
     );
-    await approveAllowanceTx.wait();
+    await approveAllowanceTx.wait(TX_CONFIRMATIONS, TX_WAIT_TIMEOUT_MS);
   } else {
     console.log('Sufficient allowance to create escrow');
   }
@@ -110,6 +118,7 @@ export async function createEscrow(
       reputationOracle: reputationOracleAddress,
     },
     {
+      ...txOptions,
       nonce: latestNonce,
     },
   );
