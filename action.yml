@@ -4,8 +4,10 @@ author: "Hu-Fi"
 inputs:
   exchange_name: { required: true }
   symbol: { required: true }
-  duration: { required: true }
-  start_delay: { required: true }
+  duration: { required: false }
+  start_delay: { required: false }
+  start_date: { required: false }
+  end_date: { required: false }
   daily_volume_target: { required: true }
   reward_token: { required: true }
   reward_amount: { required: true }
@@ -66,6 +68,8 @@ runs:
         SYMBOL: ${{ inputs.symbol }}
         DURATION: ${{ inputs.duration }}
         START_DELAY: ${{ inputs.start_delay }}
+        START_DATE: ${{ inputs.start_date }}
+        END_DATE: ${{ inputs.end_date }}
         DAILY_VOLUME_TARGET: ${{ inputs.daily_volume_target }}
         REWARD_TOKEN: ${{ inputs.reward_token }}
         REWARD_AMOUNT: ${{ inputs.reward_amount }}

@@ -7,6 +7,8 @@ if (process.env.GITHUB_ACTIONS !== 'true') {
 
 const MIN_START_DELAY = 0;
 
+const ISO_DATE_FORMAT = Joi.string().isoDate();
+
 const evmAddressSchema = Joi.string().pattern(/^0x[0-9a-fA-F]{40}$/);
 
 type EnvConfig = {
@@ -15,8 +17,10 @@ type EnvConfig = {
   SLACK_WEBHOOK_URL?: string;
   EXCHANGE_NAME: string;
   SYMBOL: string;
-  DURATION: number;
-  START_DELAY: number;
+  DURATION?: number;
+  START_DELAY?: number;
+  START_DATE?: string;
+  END_DATE?: string;
   DAILY_VOLUME_TARGET: number;
   REWARD_TOKEN: string;
   REWARD_AMOUNT: string;
@@ -33,11 +37,13 @@ const envConfigSchema = Joi.object({
     .optional(),
   EXCHANGE_NAME: Joi.string().min(2),
   SYMBOL: Joi.string().min(2),
-  DURATION: Joi.number().positive(),
+  DURATION: Joi.number().positive().optional(),
   START_DELAY: Joi.number()
     .min(MIN_START_DELAY)
     .optional()
     .default(MIN_START_DELAY),
+  START_DATE: ISO_DATE_FORMAT.optional(),
+  END_DATE: ISO_DATE_FORMAT.optional(),
   DAILY_VOLUME_TARGET: Joi.number().positive(),
   REWARD_TOKEN: Joi.string().valid('usdt', 'hmt').insensitive(),
   REWARD_AMOUNT: Joi.string().pattern(/^\d+(\.\d{1,18})?$/),
@@ -58,8 +64,10 @@ type LauncherConfig = {
   campaign: {
     exchangeName: string;
     symbol: string;
-    duration: number;
-    startDelay: number;
+    duration?: number;
+    startDelay?: number;
+    startDate?: string;
+    endDate?: string;
     rewardToken: string;
     rewardAmount: string;
     exchangeOracleAddress: string;
@@ -82,6 +90,26 @@ function loadEnvConfig(): LauncherConfig {
       },
     );
 
+    const hasExplicitDates =
+      Boolean(parsedEnvConfig.START_DATE) || Boolean(parsedEnvConfig.END_DATE);
+
+    if (hasExplicitDates) {
+      if (!parsedEnvConfig.START_DATE || !parsedEnvConfig.END_DATE) {
+        throw new Error('START_DATE and END_DATE must be provided together');
+      }
+
+      if (
+        new Date(parsedEnvConfig.END_DATE).valueOf() <=
+        new Date(parsedEnvConfig.START_DATE).valueOf()
+      ) {
+        throw new Error('END_DATE must be later than START_DATE');
+      }
+    } else if (parsedEnvConfig.DURATION === undefined) {
+      throw new Error(
+        'Either START_DATE and END_DATE or DURATION must be provided',
+      );
+    }
+
     return {
       web3: {
         rpcUrl: parsedEnvConfig.WEB3_RPC_URL,
@@ -92,6 +120,8 @@ function loadEnvConfig(): LauncherConfig {
         symbol: parsedEnvConfig.SYMBOL,
         duration: parsedEnvConfig.DURATION,
         startDelay: parsedEnvConfig.START_DELAY,
+        startDate: parsedEnvConfig.START_DATE,
+        endDate: parsedEnvConfig.END_DATE,
         rewardToken: parsedEnvConfig.REWARD_TOKEN,
         rewardAmount: parsedEnvConfig.REWARD_AMOUNT,
         exchangeOracleAddress: parsedEnvConfig.EXCHANGE_ORACLE_ADDRESS,
