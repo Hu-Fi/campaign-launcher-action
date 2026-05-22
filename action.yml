@@ -1,6 +1,6 @@
-name: "Create Escrow"
-description: "Launch a campaign escrow with provided parameters"
-author: "Hu-Fi"
+name: 'Create Escrow'
+description: 'Launch a campaign escrow with provided parameters'
+author: 'Hu-Fi'
 inputs:
   exchange_name: { required: true }
   symbol: { required: true }
@@ -17,11 +17,11 @@ inputs:
 
 outputs:
   escrow_address:
-    description: "The address of the created escrow contract"
+    description: 'The address of the created escrow contract'
     value: ${{ steps.launch.outputs.escrow_address }}
 
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Prepare action configuration
       id: prepare_config
@@ -39,7 +39,7 @@ runs:
         node-version: ${{ steps.prepare_config.outputs.node_version }}
         # Since it's composite action and paths resolved in a different way
         # we have to cache manually
-        cache: ""
+        cache: ''
 
     - name: Install Corepack
       shell: bash
@@ -77,6 +77,6 @@ runs:
         RECORDING_ORACLE_ADDRESS: ${{ inputs.recording_oracle_address }}
         REPUTATION_ORACLE_ADDRESS: ${{ inputs.reputation_oracle_address }}
       run: |
-        timeout 5m yarn launch-campaign
+        yarn launch-campaign
         ESCROW_ADDRESS=$(<escrow_address.out)
         echo "escrow_address=$ESCROW_ADDRESS" >> "$GITHUB_OUTPUT"

@@ -9,11 +9,10 @@ import { ethers, type InterfaceAbi } from 'ethers';
 
 import { ERC20_ABI, HMT_TOKEN_DECIMALS } from './constants';
 import { type CampaignManifest } from './create-manifest';
+import launcherConfig from './env-config';
 import { getTokenAddress, type CustomSigner } from './utils';
 
 const MIN_STAKED_AMOUNT_HMT = ethers.parseEther('0.001');
-const TX_WAIT_TIMEOUT_MS = 2 * 60_000;
-const TX_CONFIRMATIONS = 1;
 
 export async function createEscrow(
   signer: CustomSigner,
@@ -28,8 +27,8 @@ export async function createEscrow(
   },
 ): Promise<string> {
   const txOptions: TransactionOverrides = {
-    confirmations: TX_CONFIRMATIONS,
-    timeoutMs: TX_WAIT_TIMEOUT_MS,
+    confirmations: launcherConfig.transaction.confirmations,
+    timeoutMs: launcherConfig.transaction.waitTimeoutMs,
   };
 
   console.log('Checking staking info...');
@@ -98,7 +97,10 @@ export async function createEscrow(
       allowanceSpender,
       fundAmount,
     );
-    await approveAllowanceTx.wait(TX_CONFIRMATIONS, TX_WAIT_TIMEOUT_MS);
+    await approveAllowanceTx.wait(
+      launcherConfig.transaction.confirmations,
+      launcherConfig.transaction.waitTimeoutMs,
+    );
   } else {
     console.log('Sufficient allowance to create escrow');
   }

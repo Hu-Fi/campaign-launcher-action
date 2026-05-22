@@ -42,6 +42,10 @@ This is a **composite GitHub Action** that can be used in your workflows to laun
     WEB3_PRIVATE_KEY: ${{ secrets.WEB3_PRIVATE_KEY }}
     # Webhook url of Slack channel where to send notifications. Optional
     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+    # Optional transaction wait timeout in milliseconds. Defaults to 120000
+    TX_WAIT_TIMEOUT_MS: "120000"
+    # Optional transaction confirmations to wait for. Defaults to 1
+    TX_CONFIRMATIONS: "1"
 ```
 
 Provide either:
