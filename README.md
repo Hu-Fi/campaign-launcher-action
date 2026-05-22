@@ -13,26 +13,28 @@ This is a **composite GitHub Action** that can be used in your workflows to laun
 ```yaml
 - uses: Hu-Fi/campaign-launcher-action@v1
   with:
-    # Exchange name where you want campaign paticipants to trade
-    EXCHANGE_NAME: "mexc"
+    # Exchange name where you want campaign participants to trade
+    exchange_name: "mexc"
     # Trading pair symbol for exchange (in <base>/<quote> format)
-    SYMBOL: "HMT/USDT"
-    # Duration of the campaign in hours
-    DURATION: "24"
-    # Delay in seconds before the campaign starts (added to current time)
-    START_DELAY: "3600"
+    symbol: "HMT/USDT"
+    # Option 1: explicit campaign window in ISO 8601 format
+    start_date: "2026-05-27T12:00:00.000Z"
+    end_date: "2026-05-28T12:00:00.000Z"
+    # Option 2: derive the campaign window from now
+    # duration: "24"
+    # start_delay: "3600"
     # Daily trading volume target (in <quote> token)
-    DAILY_VOLUME_TARGET: "100000.0"
+    daily_volume_target: "100000.0"
     # The token to use for rewards (only HMT and USDT are supported atm)
-    REWARD_TOKEN: "HMT"
+    reward_token: "HMT"
     # Total rewards amount for the whole campaign duration
-    REWARD_AMOUNT: "1000"
+    reward_amount: "1000"
     # Address of Exchange Oracle that will handle campaign
-    EXCHANGE_ORACLE_ADDRESS: "0x..."
+    exchange_oracle_address: "0x..."
     # Address of Recording Oracle that will handle campaign
-    RECORDING_ORACLE_ADDRESS: "0x..."
+    recording_oracle_address: "0x..."
     # Address of Reputation Oracle that will handle campaign
-    REPUTATION_ORACLE_ADDRESS: "0x..."
+    reputation_oracle_address: "0x..."
   env:
     # JSON-RPC endpoint for the blockchain. Campaign will be launched on its chain
     WEB3_RPC_URL: ${{ secrets.WEB3_RPC_URL }}
@@ -41,6 +43,13 @@ This is a **composite GitHub Action** that can be used in your workflows to laun
     # Webhook url of Slack channel where to send notifications. Optional
     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
+
+Provide either:
+
+- `start_date` and `end_date` as ISO 8601 timestamps, or
+- `duration` in hours with optional `start_delay` in seconds.
+
+If `start_date` and `end_date` are provided, they take precedence over derived timing.
 
 ### Example Workflow
 

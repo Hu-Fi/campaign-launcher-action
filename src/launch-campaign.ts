@@ -22,6 +22,8 @@ void (async () => {
         tradingPair: launcherConfig.campaign.symbol,
         duration: launcherConfig.campaign.duration,
         startDelay: launcherConfig.campaign.startDelay,
+        startDate: launcherConfig.campaign.startDate,
+        endDate: launcherConfig.campaign.endDate,
         dailyVolumeTarget: launcherConfig.campaign.dailyVolumeTarget,
       },
     );

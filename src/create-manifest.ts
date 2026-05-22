@@ -33,22 +33,34 @@ const marketMakingInputSchema = Joi.object({
     .strict()
     .min(6)
     .max(100 * 24)
-    .required(),
+    .optional(),
   /**
    * Expected in seconds
    */
   startDelay: Joi.number().strict().min(0).default(0),
+  startDate: Joi.string().isoDate().optional(),
+  endDate: Joi.string().isoDate().optional(),
   dailyVolumeTarget: Joi.number().strict().greater(0).required(),
 }).options({ allowUnknown: true, stripUnknown: false });
 
 export async function createMarketMakingCampaignManifest(input: {
   exchangeName: string;
   tradingPair: string;
-  duration: number;
+  duration?: number;
   startDelay?: number;
+  startDate?: string;
+  endDate?: string;
   dailyVolumeTarget: number;
 }): Promise<{ manifest: CampaignManifest; manifestHash: string }> {
-  let validatedInput: Required<typeof input>;
+  let validatedInput: {
+    exchangeName: string;
+    tradingPair: string;
+    duration?: number;
+    startDelay: number;
+    startDate?: string;
+    endDate?: string;
+    dailyVolumeTarget: number;
+  };
   try {
     validatedInput = Joi.attempt(input, marketMakingInputSchema, {
       abortEarly: false,
@@ -69,11 +81,33 @@ export async function createMarketMakingCampaignManifest(input: {
     throw new Error('Failed to create market making manifest');
   }
 
-  const startDelayMs = validatedInput.startDelay * 1000;
-  const startDate = new Date(Date.now() + startDelayMs);
+  const hasExplicitDates =
+    Boolean(validatedInput.startDate) || Boolean(validatedInput.endDate);
 
-  const durationMs = validatedInput.duration * 60 * 60 * 1000;
-  const endDate = new Date(startDate.valueOf() + durationMs);
+  if (hasExplicitDates) {
+    if (!validatedInput.startDate || !validatedInput.endDate) {
+      throw new Error('Both startDate and endDate are required together');
+    }
+  } else if (validatedInput.duration === undefined) {
+    throw new Error(
+      'Duration is required when startDate and endDate are not set',
+    );
+  }
+
+  const startDate = hasExplicitDates
+    ? new Date(validatedInput.startDate as string)
+    : new Date(Date.now() + validatedInput.startDelay * 1000);
+
+  const endDate = hasExplicitDates
+    ? new Date(validatedInput.endDate as string)
+    : new Date(
+        startDate.valueOf() +
+          (validatedInput.duration as number) * 60 * 60 * 1000,
+      );
+
+  if (endDate.valueOf() <= startDate.valueOf()) {
+    throw new Error('End date must be later than start date');
+  }
 
   const manifest: MarketMakingCampaignManifest = {
     type: CampaignType.MARKET_MAKING,

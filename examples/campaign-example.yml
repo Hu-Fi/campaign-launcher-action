@@ -29,8 +29,12 @@ jobs:
         with:
           exchange_name: ${{ github.event.inputs.exchange_name || 'mexc' }}
           symbol: ${{ github.event.inputs.symbol || 'HMT/USDT' }}
-          duration: "24"
-          start_delay: "0"
+          #option 1
+          # duration: "24"
+          # start_delay: "0"
+          #option 2
+          start_date: "2026-05-22T06:00:00.000Z"
+          end_date: "2026-05-23T06:00:00.000Z"
           daily_volume_target: ${{ github.event.inputs.daily_volume_target || '100000' }}
           reward_token: "USDT"
           reward_amount: ${{ github.event.inputs.reward_amount || '10' }}
