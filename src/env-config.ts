@@ -6,6 +6,8 @@ if (process.env.GITHUB_ACTIONS !== 'true') {
 }
 
 const MIN_START_DELAY = 0;
+const DEFAULT_TX_WAIT_TIMEOUT_MS = 2 * 60_000;
+const DEFAULT_TX_CONFIRMATIONS = 1;
 
 const ISO_DATE_FORMAT = Joi.string().isoDate();
 
@@ -27,6 +29,8 @@ type EnvConfig = {
   EXCHANGE_ORACLE_ADDRESS: string;
   RECORDING_ORACLE_ADDRESS: string;
   REPUTATION_ORACLE_ADDRESS: string;
+  TX_WAIT_TIMEOUT_MS: number;
+  TX_CONFIRMATIONS: number;
 };
 
 const envConfigSchema = Joi.object({
@@ -50,6 +54,16 @@ const envConfigSchema = Joi.object({
   EXCHANGE_ORACLE_ADDRESS: evmAddressSchema,
   RECORDING_ORACLE_ADDRESS: evmAddressSchema,
   REPUTATION_ORACLE_ADDRESS: evmAddressSchema,
+  TX_WAIT_TIMEOUT_MS: Joi.number()
+    .integer()
+    .positive()
+    .optional()
+    .default(DEFAULT_TX_WAIT_TIMEOUT_MS),
+  TX_CONFIRMATIONS: Joi.number()
+    .integer()
+    .positive()
+    .optional()
+    .default(DEFAULT_TX_CONFIRMATIONS),
 }).options({
   presence: 'required',
   allowUnknown: true,
@@ -77,6 +91,10 @@ type LauncherConfig = {
   };
   notifications: {
     slackWebhookUrl?: string;
+  };
+  transaction: {
+    waitTimeoutMs: number;
+    confirmations: number;
   };
 };
 
@@ -131,6 +149,10 @@ function loadEnvConfig(): LauncherConfig {
       },
       notifications: {
         slackWebhookUrl: parsedEnvConfig.SLACK_WEBHOOK_URL,
+      },
+      transaction: {
+        waitTimeoutMs: parsedEnvConfig.TX_WAIT_TIMEOUT_MS,
+        confirmations: parsedEnvConfig.TX_CONFIRMATIONS,
       },
     };
   } catch (error) {
