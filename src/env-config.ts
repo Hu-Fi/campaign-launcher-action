@@ -37,17 +37,19 @@ const envConfigSchema = Joi.object({
   WEB3_RPC_URL: Joi.string().uri({ scheme: ['http', 'https'] }),
   WEB3_PRIVATE_KEY: Joi.string().pattern(/^(0x)?[a-fA-F0-9]{64}$/),
   SLACK_WEBHOOK_URL: Joi.string()
+    .empty('')
     .uri({ scheme: ['https'] })
     .optional(),
   EXCHANGE_NAME: Joi.string().min(2),
   SYMBOL: Joi.string().min(2),
-  DURATION: Joi.number().positive().optional(),
+  DURATION: Joi.number().empty('').positive().optional(),
   START_DELAY: Joi.number()
+    .empty('')
     .min(MIN_START_DELAY)
     .optional()
     .default(MIN_START_DELAY),
-  START_DATE: ISO_DATE_FORMAT.optional(),
-  END_DATE: ISO_DATE_FORMAT.optional(),
+  START_DATE: ISO_DATE_FORMAT.empty('').optional(),
+  END_DATE: ISO_DATE_FORMAT.empty('').optional(),
   DAILY_VOLUME_TARGET: Joi.number().positive(),
   REWARD_TOKEN: Joi.string().valid('usdt', 'hmt').insensitive(),
   REWARD_AMOUNT: Joi.string().pattern(/^\d+(\.\d{1,18})?$/),
@@ -55,11 +57,13 @@ const envConfigSchema = Joi.object({
   RECORDING_ORACLE_ADDRESS: evmAddressSchema,
   REPUTATION_ORACLE_ADDRESS: evmAddressSchema,
   TX_WAIT_TIMEOUT_MS: Joi.number()
+    .empty('')
     .integer()
     .positive()
     .optional()
     .default(DEFAULT_TX_WAIT_TIMEOUT_MS),
   TX_CONFIRMATIONS: Joi.number()
+    .empty('')
     .integer()
     .positive()
     .optional()
